@@ -230,6 +230,36 @@ namespace MySFformat
             return x1 * x2 + y1 * y2 + z1 * z2;
         }
 
+        private void paint(SoulsFormats.FLVER.Vertex v) {
+            float smallest_weight = float.MaxValue;
+            int smallest_pos = 0;
+            float other_weight_total = 0.0f;
+            bool painted = false;
+            for (int i = 0; i < 4; i++) {
+                if (v.BoneIndices[i] == selectedBone) {
+                    v.BoneWeights[i] = weightToPaint;
+                    painted = true;
+                }
+                else {
+                    other_weight_total += v.BoneWeights[i];
+                    if (v.BoneWeights[i] < smallest_weight) {
+                        smallest_weight = v.BoneWeights[i];
+                        smallest_pos = i;
+                    }
+                }
+            }
+            if (!painted) {
+                other_weight_total -= v.BoneWeights[smallest_pos];
+                v.BoneIndices[smallest_pos] = selectedBone;
+                v.BoneWeights[smallest_pos] = weightToPaint;
+            }
+            for (int i = 0; i < 4; i++) {
+                if (v.BoneIndices[i] != selectedBone) {
+                    v.BoneWeights[i] = (v.BoneWeights[i] / other_weight_total) * (1.0f - weightToPaint);
+                }
+            }
+        }
+
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
             switch (e.Button)
@@ -253,7 +283,7 @@ namespace MySFformat
                         }
                     }
                     break;
-                case MouseButtons.Left: {
+                /*case MouseButtons.Left: {
                         if (prevState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt)) {
                             prevMState = Mouse.GetState();
                             Ray r = GetMouseRay(new Vector2(prevMState.Position.X, prevMState.Position.Y), GraphicsDevice.Viewport, effect);
@@ -275,14 +305,12 @@ namespace MySFformat
                                         Vector3 normal = new Vector3(v.Normals[0].X, v.Normals[0].Y, v.Normals[0].Z);
 
                                         if (dotProduct(Vector3.Normalize(normal), Vector3.Normalize(r.Direction)) < 0) {
-                                            v.BoneIndices[0] = selectedBone;
-                                            v.BoneWeights[0] = weightToPaint;
+                                            paint(v);
                                         }
                                     }
                                     else {
                                         // If we have no normals just paint
-                                        v.BoneIndices[0] = selectedBone;
-                                        v.BoneWeights[0] = weightToPaint;
+                                        paint(v);
                                     }
                                 }
 
@@ -291,7 +319,7 @@ namespace MySFformat
                             Program.updateVertices();
                         }
                     }
-                    break;
+                    break;*/
             }
         }
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
@@ -846,6 +874,40 @@ namespace MySFformat
 
                 
 
+            }
+            else if (mState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed && Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt) && IsActive) {
+                prevMState = Mouse.GetState();
+                Ray r = GetMouseRay(new Vector2(prevMState.Position.X, prevMState.Position.Y), GraphicsDevice.Viewport, effect);
+                r.Position = new Vector3(r.Position.X, r.Position.Z, r.Position.Y);
+                r.Direction = new Vector3(r.Direction.X, r.Direction.Z, r.Direction.Y);
+
+                Vector3D x1 = new Vector3D(r.Position);
+                Vector3D x2 = new Vector3D(r.Position + r.Direction);
+
+                float ptDistance = 0.02f;
+                foreach (SoulsFormats.FLVER.Vertex v in Program.vertices) {
+                    if (v.Positions[0] == null) { continue; }
+                    float dis = Vector3D.calculateDistanceFromLine(new Vector3D(v.Positions[0]), x1, x2);
+                    if (ptDistance >= dis) {
+                        //TODO: smarter painting
+                        //Need some way to not paint the verts obscured by other faces
+                        if (v.Normals != null && v.Normals.Count > 0) {
+                            //Only paint front faces to help avoid bleedthrough
+                            Vector3 normal = new Vector3(v.Normals[0].X, v.Normals[0].Y, v.Normals[0].Z);
+
+                            if (dotProduct(Vector3.Normalize(normal), Vector3.Normalize(r.Direction)) < 0) {
+                                paint(v);
+                            }
+                        }
+                        else {
+                            // If we have no normals just paint
+                            paint(v);
+                        }
+                    }
+
+                }
+
+                Program.updateVertices();
             }
 
             if (mState.MiddleButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed && IsActive)
