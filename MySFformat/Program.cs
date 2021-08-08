@@ -209,6 +209,20 @@ namespace MySFformat
         }
       
 
+        public static Microsoft.Xna.Framework.Color getWeightColor(FLVER.Vertex v) {
+            Microsoft.Xna.Framework.Color c = new Microsoft.Xna.Framework.Color();
+            c.B = 0;
+            c.G = 0;
+            c.R = 0;
+            c.A = 255;
+            for (int i = 0; i < 4; i++) {
+                if (v.BoneIndices[i] == mono.selectedBone) {
+                    c.R += Convert.ToByte(Math.Max(Math.Min(v.BoneWeights[i] * 255, 255), 0));
+                }
+            }
+            return c;
+        }
+
 
         public static void updateVertices()
         {
@@ -216,6 +230,7 @@ namespace MySFformat
             if (legacyDisplay) { updateVerticesLegacy();return; }
             List<VertexPositionColor> ans = new List<VertexPositionColor>();
             List<VertexPositionColor> triangles = new List<VertexPositionColor>();
+            List<VertexPositionColor> weightTriangles = new List<VertexPositionColor>();
             List<VertexPositionColorTexture> textureTriangles = new List<VertexPositionColorTexture>();
             vertices.Clear();
             verticesInfo.Clear();
@@ -270,9 +285,15 @@ namespace MySFformat
                     {
                         c.B = 0;
                     }
+
+
+
                     triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Positions[0]), c));
                     triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Positions[0]), c));
                     triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Positions[0]), c));
+                    weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Positions[0]), getWeightColor(vl[0])));
+                    weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Positions[0]), getWeightColor(vl[2])));
+                    weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Positions[0]), getWeightColor(vl[1])));
 
                     if (loadTexture)
                     {
@@ -289,6 +310,9 @@ namespace MySFformat
                         triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Positions[0]), c));
                         triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Positions[0]), c));
                         triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Positions[0]), c));
+                        weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Positions[0]), getWeightColor(vl[0])));
+                        weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Positions[0]), getWeightColor(vl[1])));
+                        weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Positions[0]), getWeightColor(vl[2])));
 
 
                         if (loadTexture)
@@ -578,6 +602,7 @@ namespace MySFformat
             // mono.triTextureVertices = textureTriangles.ToArray();
             mono.meshInfos = mis.ToArray();
             mono.triVertices = triangles.ToArray();
+            mono.triWeightVertices = weightTriangles.ToArray();
         }
 
 

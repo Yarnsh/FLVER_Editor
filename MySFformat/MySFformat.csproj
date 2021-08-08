@@ -86,6 +86,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
+    <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicTools.cs" />

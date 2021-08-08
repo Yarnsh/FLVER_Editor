@@ -31,3 +31,46 @@ J:\3D MAX\血源诅咒模型工具\SoulsFormats_My\MySFformat\MySFformat\obj\Rel
 J:\3D MAX\血源诅咒模型工具\SoulsFormats_My\MySFformat\MySFformat\obj\Release\MySFformat.csproj.CopyComplete
 J:\3D MAX\血源诅咒模型工具\SoulsFormats_My\MySFformat\MySFformat\obj\Release\MySFformat.exe
 J:\3D MAX\血源诅咒模型工具\SoulsFormats_My\MySFformat\MySFformat\obj\Release\MySFformat.pdb
+C:\Users\yarns\FLVER_Editor\MySFformat\obj\Release\MySFformat.csprojAssemblyReference.cache
+C:\Users\yarns\FLVER_Editor\MySFformat\obj\Release\MySFformat.Properties.Resources.resources
+C:\Users\yarns\FLVER_Editor\MySFformat\obj\Release\MySFformat.csproj.GenerateResource.cache
+C:\Users\yarns\FLVER_Editor\MySFformat\obj\Release\MySFformat.csproj.CoreCompileInputs.cache
+C:\Users\yarns\FLVER_Editor\MySFformat\obj\Release\MySFformat.exe
+C:\Users\yarns\FLVER_Editor\MySFformat\obj\Release\MySFformat.pdb
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\oo2core_6_win64.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\dummyInfo.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\singleColor.png
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\boneConvertion.ini
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\boxobj.mtl
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\boxobj.obj
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\EliteKnight.flver
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\MySFformat.ini
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\WP_A_0300.flver
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\WP_A_1070_Cane.flver
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\MySFformat.exe.config
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\MySFformat.exe
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\MySFformat.pdb
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\AssimpNet.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\CjClutter.ObjLoader.Loader.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\MonoGame.Framework.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\Pfim.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SoulsFormats.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.MediaFoundation.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.XAudio2.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.DXGI.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.Direct3D11.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.Direct2D1.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.XInput.dll
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\AssimpNet.xml
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\MonoGame.Framework.xml
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SoulsFormats.pdb
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SoulsFormats.xml
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.MediaFoundation.xml
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.xml
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.XAudio2.xml
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.DXGI.xml
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.Direct3D11.xml
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.Direct2D1.xml
+C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.XInput.xml
+C:\Users\yarns\FLVER_Editor\MySFformat\obj\Release\MySFformat.csproj.CopyComplete

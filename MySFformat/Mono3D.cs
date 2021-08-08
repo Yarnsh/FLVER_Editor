@@ -18,7 +18,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace MySFformat
 {
-    enum RenderMode { Line, Triangle, Both, BothNoTex, TexOnly }
+    enum RenderMode { Line, Triangle, Both, BothNoTex, TexOnly, Weights }
 
     public class MeshInfos 
     {
@@ -32,13 +32,16 @@ namespace MySFformat
         Texture2D test;
         KeyboardState prevState = new KeyboardState();
         MouseState prevMState = new MouseState();
-       public RenderMode renderMode = RenderMode.Both;
+        public RenderMode renderMode = RenderMode.Both;
         public VertexPositionColor[] vertices = new VertexPositionColor[0];
         public VertexPositionColor[] triVertices = new VertexPositionColor[0];
+        public VertexPositionColor[] triWeightVertices = new VertexPositionColor[0];
         public bool flatShading = false;
+        public int selectedBone = 0;
+        public float weightToPaint = 0.0f;
+        public bool paintingWeight = false;
 
-
-      //  public VertexPositionColorTexture[] triTextureVertices = new VertexPositionColorTexture[0];
+        //  public VertexPositionColorTexture[] triTextureVertices = new VertexPositionColorTexture[0];
         public MeshInfos[] meshInfos = new MeshInfos[0];
         VertexPositionTexture[] floorVerts;
         BasicEffect effect;
@@ -70,7 +73,7 @@ namespace MySFformat
         private static GCHandle handle;
         public Mono3D()
         {
-            Window.Title = "FLVER Viewer by Forsakensilver, press F to refresh, press F1 F2 F3 F4 F5: Change render mode Right click: check vertex info B: Toggle bone display M: Dummy display";
+            Window.Title = "FLVER Viewer by Forsakensilver, press F to refresh, press F1 F2 F3 F4 F5 F9: Change render mode Right click: check vertex info B: Toggle bone display M: Dummy display";
             Window.AllowUserResizing = true;
             this.IsMouseVisible = true;
             graphics = new GraphicsDeviceManager(this);
@@ -135,14 +138,18 @@ namespace MySFformat
 
             });
             cm.MenuItems.Add(mi);
-          /*  cm.MenuItems.Add("Delete Vertices Below", new EventHandler(delegate (Object o, EventArgs a)
-            {
-                deleteVertexBelow();
-                // editVerticesInfo();
-                //    MessageBox.Show(targetV);
+            /*  cm.MenuItems.Add("Delete Vertices Below", new EventHandler(delegate (Object o, EventArgs a)
+              {
+                  deleteVertexBelow();
+                  // editVerticesInfo();
+                  //    MessageBox.Show(targetV);
 
+              }));
+              */
+
+            cm.MenuItems.Add("Select Bone", new EventHandler(delegate (Object o, EventArgs a) {
+                selectBone();
             }));
-            */
 
             f.ContextMenu = cm;
            
@@ -213,6 +220,16 @@ namespace MySFformat
             Program.updateVertices();
         }
 
+        private static float dotProduct(Vector3 a, Vector3 b) {
+            float x1 = a.X;
+            float y1 = a.Y;
+            float z1 = a.Z;
+            float x2 = b.X;
+            float y2 = b.Y;
+            float z2 = b.Z;
+            return x1 * x2 + y1 * y2 + z1 * z2;
+        }
+
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
             switch (e.Button)
@@ -226,17 +243,53 @@ namespace MySFformat
 
                         f.ContextMenu = null;
                         //f.ContextMenu.Show();
-                        if (prevState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) && !rightClickSilence)
-                        {
+                        if (prevState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) && !rightClickSilence) {
                             rightClickSilence = true;
                             System.Windows.MessageBox.Show("Ctrl + Right Click pressed. Switch To Right Click Slience Mode.");
                         }
-                        else if (prevState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) &&rightClickSilence)
-                        {
-                            rightClickSilence =false;
+                        else if (prevState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) && rightClickSilence) {
+                            rightClickSilence = false;
                             System.Windows.MessageBox.Show("Ctrl + Right Click pressed. Switch To Right Click Non-Slience Mode.");
                         }
+                    }
+                    break;
+                case MouseButtons.Left: {
+                        if (prevState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt)) {
+                            prevMState = Mouse.GetState();
+                            Ray r = GetMouseRay(new Vector2(prevMState.Position.X, prevMState.Position.Y), GraphicsDevice.Viewport, effect);
+                            r.Position = new Vector3(r.Position.X, r.Position.Z, r.Position.Y);
+                            r.Direction = new Vector3(r.Direction.X, r.Direction.Z, r.Direction.Y);
 
+                            Vector3D x1 = new Vector3D(r.Position);
+                            Vector3D x2 = new Vector3D(r.Position + r.Direction);
+
+                            float ptDistance = 0.02f;
+                            foreach (SoulsFormats.FLVER.Vertex v in Program.vertices) {
+                                if (v.Positions[0] == null) { continue; }
+                                float dis = Vector3D.calculateDistanceFromLine(new Vector3D(v.Positions[0]), x1, x2);
+                                if (ptDistance >= dis) {
+                                    //TODO: smarter painting
+                                    //Need some way to not paint the verts obscured by other faces
+                                    if (v.Normals != null && v.Normals.Count > 0) {
+                                        //Only paint front faces to help avoid bleedthrough
+                                        Vector3 normal = new Vector3(v.Normals[0].X, v.Normals[0].Y, v.Normals[0].Z);
+
+                                        if (dotProduct(Vector3.Normalize(normal), Vector3.Normalize(r.Direction)) < 0) {
+                                            v.BoneIndices[0] = selectedBone;
+                                            v.BoneWeights[0] = weightToPaint;
+                                        }
+                                    }
+                                    else {
+                                        // If we have no normals just paint
+                                        v.BoneIndices[0] = selectedBone;
+                                        v.BoneWeights[0] = weightToPaint;
+                                    }
+                                }
+
+                            }
+
+                            Program.updateVertices();
+                        }
                     }
                     break;
             }
@@ -516,6 +569,48 @@ namespace MySFformat
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         /// 
 
+
+        protected void selectBone()
+        {
+            Form fn = new Form();
+            fn.Size = new System.Drawing.Size(350, 650);
+
+            Label label1 = new Label();
+            label1.Text = "Selected Bone";
+            label1.Location = new System.Drawing.Point(10, 50);
+
+            NumericUpDown bone = new NumericUpDown();
+            bone.Location = new System.Drawing.Point(10, 100);
+            bone.Value = selectedBone;
+
+            Label label2 = new Label();
+            label2.Text = "Weight to Paint";
+            label2.Location = new System.Drawing.Point(10, 150);
+
+            TextBox tbp = new TextBox();
+            tbp.Size = new System.Drawing.Size(300, 40);
+            tbp.Location = new System.Drawing.Point(10, 200);
+            tbp.Text = Convert.ToString(weightToPaint);
+
+            Button bn = new Button();
+            bn.Size = new System.Drawing.Size(330, 35);
+            bn.Location = new System.Drawing.Point(5, 560);
+            bn.Text = "Select";
+            bn.Click += (s, o) => {
+                selectedBone = (int)bone.Value;
+                weightToPaint = float.Parse(tbp.Text, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                Program.updateVertices();
+            };
+
+            fn.Controls.Add(label1);
+            fn.Controls.Add(bone);
+            fn.Controls.Add(label2);
+            fn.Controls.Add(tbp);
+            fn.Controls.Add(bn);
+            fn.Show();
+        }
+
+
         protected void checkVerticesSilent()
         {
             Ray r = GetMouseRay(new Vector2(prevMState.Position.X, prevMState.Position.Y), GraphicsDevice.Viewport, effect);
@@ -596,13 +691,26 @@ namespace MySFformat
                 Form fn = new Form();
                 fn.Size = new System.Drawing.Size(350,650);
 
-                TextBox tb = new TextBox();
-                tb.Size = new System.Drawing.Size(330,550);
-                tb.Location = new System.Drawing.Point(5, 10);
+                string positions = Program.FormatOutput(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(targetV.Positions));
+                TextBox tbp = new TextBox();
+                tbp.Size = new System.Drawing.Size(330,183);
+                tbp.Location = new System.Drawing.Point(5, 10);
+                tbp.Multiline = true;
+                tbp.Text = positions;
 
-                tb.Multiline = true;
+                string indices = Program.FormatOutput(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(targetV.BoneIndices));
+                TextBox tbi = new TextBox();
+                tbi.Size = new System.Drawing.Size(330, 183);
+                tbi.Location = new System.Drawing.Point(5, 193);
+                tbi.Multiline = true;
+                tbi.Text = indices;
 
-                tb.Text = Program.FormatOutput(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(targetV.Positions));
+                string weights = Program.FormatOutput(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(targetV.BoneWeights));
+                TextBox tbw = new TextBox();
+                tbw.Size = new System.Drawing.Size(330, 183);
+                tbw.Location = new System.Drawing.Point(5, 386);
+                tbw.Multiline = true;
+                tbw.Text = weights;
 
 
                 Button bn = new Button();
@@ -610,13 +718,19 @@ namespace MySFformat
                 bn.Location = new System.Drawing.Point(5, 560);
                 bn.Text = "Modify";
                 bn.Click += (s, o) => {
-                    List<System.Numerics.Vector3>  vn = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<System.Numerics.Vector3>>(tb.Text);
-                    targetV.Positions = vn;
+                    List<System.Numerics.Vector3> vp = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<System.Numerics.Vector3>>(tbp.Text);
+                    int[] vi = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<int>>(tbi.Text).ToArray();
+                    float[] vw = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<float>>(tbw.Text).ToArray();
+                    targetV.Positions = vp;
+                    targetV.BoneWeights = vw;
+                    targetV.BoneIndices = vi;
                     Program.updateVertices();
                 };
 
 
-                fn.Controls.Add(tb);
+                fn.Controls.Add(tbp);
+                fn.Controls.Add(tbi);
+                fn.Controls.Add(tbw);
                 fn.Controls.Add(bn);
                 fn.Show();
 
@@ -702,7 +816,7 @@ namespace MySFformat
 
            
 
-            if (mState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed && IsActive)
+            if (mState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed && !Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt) && IsActive)
             {
                 float mdx = mState.X - prevMState.X;
                 float mdy = mState.Y - prevMState.Y;
@@ -776,6 +890,10 @@ namespace MySFformat
             if (state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F5))
             {
                 renderMode = RenderMode.TexOnly;
+            }
+            if (state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F9))
+            {
+                renderMode = RenderMode.Weights;
             }
 
             if (state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F6) && !prevState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F6))
@@ -1073,6 +1191,10 @@ namespace MySFformat
                 {
 
                     graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, triVertices, 0, triVertices.Length / 3);
+                }
+                else if (renderMode == RenderMode.Weights && triWeightVertices.Length > 0)
+                {
+                    graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, triWeightVertices, 0, triWeightVertices.Length / 3);
                 }
                 else
                 {
