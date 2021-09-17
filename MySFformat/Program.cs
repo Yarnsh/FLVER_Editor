@@ -216,8 +216,10 @@ namespace MySFformat
             c.R = 0;
             c.A = 255;
             for (int i = 0; i < 4; i++) {
-                if (v.BoneIndices[i] == mono.selectedBone) {
-                    c.R += Convert.ToByte(Math.Max(Math.Min(v.BoneWeights[i] * 255, 255), 0));
+                if (v.BoneIndices != null) {
+                    if (v.BoneIndices[i] == mono.selectedBone) {
+                        c.R += Convert.ToByte(Math.Max(Math.Min(v.BoneWeights[i] * 255, 255), 0));
+                    }
                 }
             }
             return c;
