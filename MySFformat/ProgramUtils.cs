@@ -667,8 +667,6 @@ namespace MySFformat
             t.Text = "0";
             f.Controls.Add(t);
 
-
-
             TextBox t2 = new TextBox();
             t2.Size = new System.Drawing.Size(70, 15);
             t2.Location = new System.Drawing.Point(10, 100);
@@ -680,6 +678,12 @@ namespace MySFformat
             t3.Location = new System.Drawing.Point(10, 140);
             t3.Text = "0";
             f.Controls.Add(t3);
+
+            TextBox keepMeshesIndex = new TextBox();
+            keepMeshesIndex.Size = new System.Drawing.Size(150, 15);
+            keepMeshesIndex.Location = new System.Drawing.Point(100, 60);
+            keepMeshesIndex.Text = "";
+            f.Controls.Add(keepMeshesIndex);
 
             CheckBox cb1 = new CheckBox();
             cb1.Size = new System.Drawing.Size(70, 15);
@@ -712,8 +716,55 @@ namespace MySFformat
             float y = float.Parse(t2.Text);
             float z = float.Parse(t3.Text);
 
+            int[] SplitStringIntoInts(string list)
+            {
+                string[] split = list.Split(new char[1] { ',' });
+                List<int> numbers = new List<int>();
+                int parsed;
 
-            b.Meshes = src.Meshes;
+                foreach (string n in split)
+                {
+                    if (int.TryParse(n, out parsed))
+                    {
+                        numbers.Add(parsed);
+                    }
+                }
+
+                return numbers.ToArray();
+            }
+            int[] meshesToKeep;
+
+            // Get a list of meshes to keep from the src flver
+            if (keepMeshesIndex.Text.Length > 0)
+            {
+                // Parse the mesh indices
+                meshesToKeep = SplitStringIntoInts(keepMeshesIndex.Text);
+                b.Meshes.Clear();
+                foreach (int meshIndex in meshesToKeep)
+                {
+                    b.Meshes.Add(src.Meshes[meshIndex]);
+                }
+            }
+            else
+            {
+                b.Meshes = src.Meshes;
+            }
+
+            /*
+            if (src.Meshes.Count >= 2)
+            {
+                b.Meshes.Clear();
+                for (int count = 0; count < src.Meshes.Count; count++)
+                {
+                    if (count == 8)
+                    {
+                        b.Meshes.Add(src.Meshes[count]);
+                    }
+                    Console.Write($"{count}");
+                    continue;
+                }
+            }
+            */
 
 
             if (cb1.Checked)
