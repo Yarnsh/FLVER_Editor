@@ -74,3 +74,28 @@ C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.Direct3D11.xml
 C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.Direct2D1.xml
 C:\Users\yarns\FLVER_Editor\MySFformat\bin\Release\SharpDX.XInput.xml
 C:\Users\yarns\FLVER_Editor\MySFformat\obj\Release\MySFformat.csproj.CopyComplete
+D:\ModToolReleases\Flver Editor - TSW v01\oo2core_6_win64.dll
+D:\ModToolReleases\Flver Editor - TSW v01\dummyInfo.dll
+D:\ModToolReleases\Flver Editor - TSW v01\singleColor.png
+D:\ModToolReleases\Flver Editor - TSW v01\boneConvertion.ini
+D:\ModToolReleases\Flver Editor - TSW v01\boxobj.mtl
+D:\ModToolReleases\Flver Editor - TSW v01\boxobj.obj
+D:\ModToolReleases\Flver Editor - TSW v01\EliteKnight.flver
+D:\ModToolReleases\Flver Editor - TSW v01\MySFformat.ini
+D:\ModToolReleases\Flver Editor - TSW v01\WP_A_0300.flver
+D:\ModToolReleases\Flver Editor - TSW v01\WP_A_1070_Cane.flver
+D:\ModToolReleases\Flver Editor - TSW v01\MySFformat.exe.config
+D:\ModToolReleases\Flver Editor - TSW v01\MySFformat.exe.manifest
+D:\ModToolReleases\Flver Editor - TSW v01\MySFformat.application
+D:\ModToolReleases\Flver Editor - TSW v01\MySFformat.exe
+D:\ModToolReleases\Flver Editor - TSW v01\MySFformat.pdb
+C:\Users\msoft\ModTools\FLVER_Editor\MySFformat\obj\Release\MySFformat.exe.config
+C:\Users\msoft\ModTools\FLVER_Editor\MySFformat\obj\Release\MySFformat.Properties.Resources.resources
+C:\Users\msoft\ModTools\FLVER_Editor\MySFformat\obj\Release\MySFformat.csproj.GenerateResource.cache
+C:\Users\msoft\ModTools\FLVER_Editor\MySFformat\obj\Release\MySFformat.csproj.CoreCompileInputs.cache
+C:\Users\msoft\ModTools\FLVER_Editor\MySFformat\obj\Release\MySFformat.exe.manifest
+C:\Users\msoft\ModTools\FLVER_Editor\MySFformat\obj\Release\MySFformat.application
+C:\Users\msoft\ModTools\FLVER_Editor\MySFformat\obj\Release\MySFformat.csproj.CopyComplete
+C:\Users\msoft\ModTools\FLVER_Editor\MySFformat\obj\Release\MySFformat.exe
+C:\Users\msoft\ModTools\FLVER_Editor\MySFformat\obj\Release\MySFformat.pdb
+C:\Users\msoft\ModTools\FLVER_Editor\MySFformat\obj\Release\MySFformat.csproj.AssemblyReference.cache

@@ -44,7 +44,7 @@
             fileStream.Close();
 
 
-            FLVER.Mesh mn = new FLVER.Mesh();
+            FLVER2.Mesh mn = new FLVER.Mesh();
             mn.MaterialIndex = 0;
             mn.BoneIndices = new List<int>();
             mn.BoneIndices.Add(0);
@@ -62,10 +62,10 @@
             mn.Vertices.Add(generateVertex(new Vector3(0, 1, 0), new Vector3(0, 0, 0), new Vector3(0, 0, 0), new Vector3(0, 1, 0), new Vector3(1, 0, 0)));
             mn.Vertices.Add(generateVertex(new Vector3(0, 0, 1), new Vector3(0, 0, 0), new Vector3(0, 0, 0), new Vector3(0, 1, 0), new Vector3(1, 0, 0)));
 
-            mn.FaceSets = new List<FLVER.FaceSet>();
+            mn.FaceSets = new List<FLVER2.FaceSet>();
             //FLVER.Vertex myv = new FLVER.Vertex();
             //myv.Colors = new List<FLVER.Vertex.Color>();
-            mn.FaceSets.Add(new FLVER.FaceSet());
+            mn.FaceSets.Add(new FLVER2.FaceSet());
             mn.FaceSets[0].CullBackfaces = true;
             mn.FaceSets[0].TriangleStrip = false;
             mn.FaceSets[0].Unk06 = 1;

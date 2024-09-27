@@ -38,7 +38,7 @@ namespace MySFformat
 
 
 
-        public static Vector3 findBoneTrans(List<FLVER.Bone> b, int index, Vector3 v = new Vector3())
+        public static Vector3 findBoneTrans(List<FLVER2.Bone> b, int index, Vector3 v = new Vector3())
         {
             /* if (bonePosList[index] != null)
              {
@@ -144,17 +144,17 @@ namespace MySFformat
 
             //Step 1 add a new buffer layout for my program:
             int layoutCount = targetFlver.BufferLayouts.Count;
-            FLVER.BufferLayout newBL = new FLVER.BufferLayout();
+            FLVER2.BufferLayout newBL = new FLVER2.BufferLayout();
 
-            newBL.Add(new FLVER.BufferLayout.Member(0, 0, FLVER.BufferLayout.MemberType.Float3, FLVER.BufferLayout.MemberSemantic.Position, 0));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 12, FLVER.BufferLayout.MemberType.Byte4B, FLVER.BufferLayout.MemberSemantic.Normal, 0));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 16, FLVER.BufferLayout.MemberType.Byte4B, FLVER.BufferLayout.MemberSemantic.Tangent, 0));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 20, FLVER.BufferLayout.MemberType.Byte4B, FLVER.BufferLayout.MemberSemantic.Tangent, 1));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Float3, FLVER.LayoutSemantic.Position, 0, 0));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4B, FLVER.LayoutSemantic.Normal, 0, 12));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4B, FLVER.LayoutSemantic.Tangent, 0, 16));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4B, FLVER.LayoutSemantic.Tangent, 1, 20));
 
-            newBL.Add(new FLVER.BufferLayout.Member(0, 24, FLVER.BufferLayout.MemberType.Byte4B, FLVER.BufferLayout.MemberSemantic.BoneIndices, 0));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 28, FLVER.BufferLayout.MemberType.Byte4C, FLVER.BufferLayout.MemberSemantic.BoneWeights, 0));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 32, FLVER.BufferLayout.MemberType.Byte4C, FLVER.BufferLayout.MemberSemantic.VertexColor, 1));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 36, FLVER.BufferLayout.MemberType.UVPair, FLVER.BufferLayout.MemberSemantic.UV, 0));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4B, FLVER.LayoutSemantic.BoneIndices, 0, 24));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4C, FLVER.LayoutSemantic.BoneWeights, 0, 28));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4C, FLVER.LayoutSemantic.VertexColor, 1, 32));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.UVPair, FLVER.LayoutSemantic.UV, 0, 36));
 
             targetFlver.BufferLayouts.Add(newBL);
 
@@ -163,19 +163,19 @@ namespace MySFformat
 
 
 
-            FLVER.Mesh mn = new FLVER.Mesh();
+            FLVER2.Mesh mn = new FLVER2.Mesh();
             mn.MaterialIndex = 0;
             mn.BoneIndices = new List<int>();
             mn.BoneIndices.Add(0);
             mn.BoneIndices.Add(1);
-            mn.BoundingBoxMax = new Vector3(1, 1, 1);
-            mn.BoundingBoxMin = new Vector3(-1, -1, -1);
-            mn.BoundingBoxUnk = new Vector3();
-            mn.Unk1 = 0;
+            mn.BoundingBox.Max = new Vector3(1, 1, 1);
+            mn.BoundingBox.Min = new Vector3(-1, -1, -1);
+            mn.BoundingBox.Unk = new Vector3();
+            //mn.Unk1 = 0;
             mn.DefaultBoneIndex = 0;
             mn.Dynamic = false;
-            mn.VertexBuffers = new List<FLVER.VertexBuffer>();
-            mn.VertexBuffers.Add(new FLVER.VertexBuffer(0, layoutCount, -1));
+            mn.VertexBuffers = new List<FLVER2.VertexBuffer>();
+            mn.VertexBuffers.Add(new FLVER2.VertexBuffer(layoutCount));
             mn.Vertices = new List<FLVER.Vertex>();
             // mn.Vertices.Add(generateVertex(new Vector3(1,0,0),new Vector3(0,0,0),new Vector3(0,0,0),new Vector3(0,1,0),new Vector3(1,0,0)));
             //mn.Vertices.Add(generateVertex(new Vector3(0, 1, 0), new Vector3(0, 0, 0), new Vector3(0, 0, 0), new Vector3(0, 1, 0), new Vector3(1, 0, 0)));
@@ -193,7 +193,7 @@ namespace MySFformat
                 vnlist[i] = new VertexNormalList();
             }
 
-            List<uint> faceIndexs = new List<uint>();
+            List<int> faceIndexs = new List<int>();
             uint[] textureIndexs = new uint[result.Vertices.Count + 1];
             foreach (var gr in result.Groups)
             {
@@ -210,9 +210,9 @@ namespace MySFformat
                     }*/
                     if (vList.Length == 4)
                     {
-                        faceIndexs.Add((uint)(vList[0].VertexIndex) - 1);
-                        faceIndexs.Add((uint)(vList[2].VertexIndex) - 1);
-                        faceIndexs.Add((uint)(vList[1].VertexIndex) - 1);
+                        faceIndexs.Add((int)(vList[0].VertexIndex) - 1);
+                        faceIndexs.Add((int)(vList[2].VertexIndex) - 1);
+                        faceIndexs.Add((int)(vList[1].VertexIndex) - 1);
 
                         //record normal to help calculate vertex normals
                         int helperI = 0;
@@ -228,9 +228,9 @@ namespace MySFformat
                         textureIndexs[(vList[helperI].VertexIndex) - 1] = ((uint)vList[helperI].TextureIndex - 1);
 
 
-                        faceIndexs.Add((uint)(vList[2].VertexIndex) - 1);
-                        faceIndexs.Add((uint)(vList[0].VertexIndex) - 1);
-                        faceIndexs.Add((uint)(vList[3].VertexIndex) - 1);
+                        faceIndexs.Add((int)(vList[2].VertexIndex) - 1);
+                        faceIndexs.Add((int)(vList[0].VertexIndex) - 1);
+                        faceIndexs.Add((int)(vList[3].VertexIndex) - 1);
 
                         helperI = 2;
                         vnlist[(uint)(vList[helperI].VertexIndex) - 1].add(new Vector3D(result.Normals[vList[helperI].NormalIndex - 1].X, result.Normals[vList[helperI].NormalIndex - 1].Y, result.Normals[vList[helperI].NormalIndex - 1].Z));
@@ -248,9 +248,9 @@ namespace MySFformat
                     else if (vList.Length == 3)
                     {
 
-                        faceIndexs.Add((uint)(vList[0].VertexIndex) - 1);
-                        faceIndexs.Add((uint)(vList[2].VertexIndex) - 1);
-                        faceIndexs.Add((uint)(vList[1].VertexIndex) - 1);
+                        faceIndexs.Add((int)(vList[0].VertexIndex) - 1);
+                        faceIndexs.Add((int)(vList[2].VertexIndex) - 1);
+                        faceIndexs.Add((int)(vList[1].VertexIndex) - 1);
 
 
                         int helperI = 2;
@@ -272,11 +272,11 @@ namespace MySFformat
             //mn.FaceSets[0].Vertices = new uint [3]{0,1,2 };
 
 
-            mn.FaceSets = new List<FLVER.FaceSet>();
+            mn.FaceSets = new List<FLVER2.FaceSet>();
             //FLVER.Vertex myv = new FLVER.Vertex();
             //myv.Colors = new List<FLVER.Vertex.Color>();
             mn.FaceSets.Add(generateBasicFaceSet());
-            mn.FaceSets[0].Vertices = faceIndexs.ToArray();
+            mn.FaceSets[0].Indices = faceIndexs;
 
 
 
@@ -304,7 +304,7 @@ namespace MySFformat
                 mn.Vertices.Add(generateVertex(new Vector3(v.X, v.Y, v.Z), uv1, uv2, normal, tangent));
 
             }
-            FLVER.Material matnew = new JavaScriptSerializer().Deserialize<FLVER.Material>(new JavaScriptSerializer().Serialize(targetFlver.Materials[0]));
+            FLVER2.Material matnew = new JavaScriptSerializer().Deserialize<FLVER2.Material>(new JavaScriptSerializer().Serialize(targetFlver.Materials[0]));
             matnew.Name = res.Substring(res.LastIndexOf('\\') + 1);
             targetFlver.Materials.Add(matnew);
             mn.MaterialIndex = materialCount;
@@ -370,14 +370,14 @@ namespace MySFformat
             return new Vector3D(v.X, v.Y, v.Z);
         }
 
-        static FLVER.FaceSet generateBasicFaceSet()
+        static FLVER2.FaceSet generateBasicFaceSet()
         {
-            FLVER.FaceSet ans = new FLVER.FaceSet();
+            FLVER2.FaceSet ans = new FLVER2.FaceSet();
             ans.CullBackfaces = true;
             ans.TriangleStrip = false;
             ans.Unk06 = 1;
             ans.Unk07 = 0;
-            ans.IndexSize = 16;
+            //ans.IndexSize = 16;
 
             return ans;
 
@@ -386,20 +386,20 @@ namespace MySFformat
         static FLVER.Vertex generateVertex(Vector3 pos, Vector3 uv1, Vector3 uv2, Vector3 normal, Vector3 tangets, int tangentW = -1)
         {
             FLVER.Vertex ans = new FLVER.Vertex();
-            ans.Positions = new List<Vector3>();
-            ans.Positions.Add(pos);
+            ans.Position = new Vector3();
+            ans.Position = pos;
             ans.BoneIndices = new int[4] { 0, 0, 0, 0 };
             ans.BoneWeights = new float[4] { 1, 0, 0, 0 };
             ans.UVs = new List<Vector3>();
             ans.UVs.Add(uv1);
             ans.UVs.Add(uv2);
-            ans.Normals = new List<Vector4>();
-            ans.Normals.Add(new Vector4(normal.X, normal.Y, normal.Z, -1f));
+            ans.Normal = new Vector4();
+            ans.Normal = new Vector4(normal.X, normal.Y, normal.Z, -1f);
             ans.Tangents = new List<Vector4>();
             ans.Tangents.Add(new Vector4(tangets.X, tangets.Y, tangets.Z, tangentW));
             ans.Tangents.Add(new Vector4(tangets.X, tangets.Y, tangets.Z, tangentW));
-            ans.Colors = new List<FLVER.Vertex.Color>();
-            ans.Colors.Add(new FLVER.Vertex.Color(255, 255, 255, 255));
+            ans.Colors = new List<FLVER.VertexColor>();
+            ans.Colors.Add(new FLVER.VertexColor(255, 255, 255, 255));
 
             return ans;
         }
@@ -408,20 +408,20 @@ namespace MySFformat
         static FLVER.Vertex generateVertex(Vector3 pos, Vector3 uv1, Vector3 uv2, Vector4 normal, Vector4 tangets, int tangentW = -1)
         {
             FLVER.Vertex ans = new FLVER.Vertex();
-            ans.Positions = new List<Vector3>();
-            ans.Positions.Add(pos);
+            ans.Position = new Vector3();
+            ans.Position = pos;
             ans.BoneIndices = new int[4] { 0, 0, 0, 0 };
             ans.BoneWeights = new float[4] { 1, 0, 0, 0 };
             ans.UVs = new List<Vector3>();
             ans.UVs.Add(uv1);
             ans.UVs.Add(uv2);
-            ans.Normals = new List<Vector4>();
-            ans.Normals.Add(new Vector4(normal.X, normal.Y, normal.Z, normal.W));
+            ans.Normal = new Vector4();
+            ans.Normal = (new Vector4(normal.X, normal.Y, normal.Z, normal.W));
             ans.Tangents = new List<Vector4>();
             ans.Tangents.Add(new Vector4(tangets.X, tangets.Y, tangets.Z, tangets.W));
             ans.Tangents.Add(new Vector4(tangets.X, tangets.Y, tangets.Z, tangets.W));
-            ans.Colors = new List<FLVER.Vertex.Color>();
-            ans.Colors.Add(new FLVER.Vertex.Color(255, 255, 255, 255));
+            ans.Colors = new List<FLVER.VertexColor>();
+            ans.Colors.Add(new FLVER.VertexColor(255, 255, 255, 255));
 
             return ans;
         }
@@ -429,20 +429,20 @@ namespace MySFformat
         static FLVER.Vertex generateVertex2tan(Vector3 pos, Vector3 uv1, Vector3 uv2, Vector3 normal, Vector3 tangets, Vector3 tangets2, int tangentW = -1)
         {
             FLVER.Vertex ans = new FLVER.Vertex();
-            ans.Positions = new List<Vector3>();
-            ans.Positions.Add(pos);
+            ans.Position = new Vector3();
+            ans.Position = pos;
             ans.BoneIndices = new int[4] { 0, 0, 0, 0 };
             ans.BoneWeights = new float[4] { 1, 0, 0, 0 };
             ans.UVs = new List<Vector3>();
             ans.UVs.Add(uv1);
             ans.UVs.Add(uv2);
-            ans.Normals = new List<Vector4>();
-            ans.Normals.Add(new Vector4(normal.X, normal.Y, normal.Z, -1f));
+            ans.Normal = new Vector4();
+            ans.Normal = (new Vector4(normal.X, normal.Y, normal.Z, -1f));
             ans.Tangents = new List<Vector4>();
             ans.Tangents.Add(new Vector4(tangets.X, tangets.Y, tangets.Z, tangentW));
             ans.Tangents.Add(new Vector4(tangets2.X, tangets2.Y, tangets2.Z, tangentW));
-            ans.Colors = new List<FLVER.Vertex.Color>();
-            ans.Colors.Add(new FLVER.Vertex.Color(255, 255, 255, 255));
+            ans.Colors = new List<FLVER.VertexColor>();
+            ans.Colors.Add(new FLVER.VertexColor(255, 255, 255, 255));
 
             return ans;
         }
@@ -597,7 +597,7 @@ namespace MySFformat
                 return;
             }
 
-            FLVER b = FLVER.Read(openFileDialog1.FileName);
+            FLVER2 b = FLVER2.Read(openFileDialog1.FileName);
 
 
 
@@ -615,7 +615,7 @@ namespace MySFformat
             {
                 return;
             }
-            FLVER src = FLVER.Read(openFileDialog2.FileName);
+            FLVER2 src = FLVER2.Read(openFileDialog2.FileName);
 
 
 
@@ -626,13 +626,13 @@ namespace MySFformat
 
 
             Console.WriteLine("Material:");
-            foreach (FLVER.Material m in b.Materials)
+            foreach (FLVER2.Material m in b.Materials)
             {
                 Console.WriteLine(m.Name);
 
             }
 
-            foreach (FLVER.Mesh m in b.Meshes)
+            foreach (FLVER2.Mesh m in b.Meshes)
             {
                 Console.WriteLine("Mesh#" + m.MaterialIndex);
 
@@ -667,8 +667,6 @@ namespace MySFformat
             t.Text = "0";
             f.Controls.Add(t);
 
-
-
             TextBox t2 = new TextBox();
             t2.Size = new System.Drawing.Size(70, 15);
             t2.Location = new System.Drawing.Point(10, 100);
@@ -680,6 +678,12 @@ namespace MySFformat
             t3.Location = new System.Drawing.Point(10, 140);
             t3.Text = "0";
             f.Controls.Add(t3);
+
+            TextBox keepMeshesIndex = new TextBox();
+            keepMeshesIndex.Size = new System.Drawing.Size(150, 15);
+            keepMeshesIndex.Location = new System.Drawing.Point(100, 60);
+            keepMeshesIndex.Text = "";
+            f.Controls.Add(keepMeshesIndex);
 
             CheckBox cb1 = new CheckBox();
             cb1.Size = new System.Drawing.Size(70, 15);
@@ -712,12 +716,75 @@ namespace MySFformat
             float y = float.Parse(t2.Text);
             float z = float.Parse(t3.Text);
 
+            int[] SplitStringIntoInts(string list)
+            {
+                string[] split = list.Split(new char[1] { ',' });
+                List<int> numbers = new List<int>();
+                int parsed;
 
-            b.Meshes = src.Meshes;
+                foreach (string n in split)
+                {
+                    if (int.TryParse(n, out parsed))
+                    {
+                        numbers.Add(parsed);
+                    }
+                }
+
+                return numbers.ToArray();
+            }
+            int[] meshesToKeep;
+            List<int> materialsToKeep = new List<int>();
+
+            // Get a list of meshes to keep from the src flver
+            if (keepMeshesIndex.Text.Length > 0)
+            {
+                // Parse the mesh indices
+                meshesToKeep = SplitStringIntoInts(keepMeshesIndex.Text);
+                b.Meshes.Clear();
+                foreach (int meshIndex in meshesToKeep)
+                {
+                    b.Meshes.Add(src.Meshes[meshIndex]);
+                    materialsToKeep.Add(src.Meshes[meshIndex].MaterialIndex);
+                }
+            }
+            else
+            {
+                b.Meshes = src.Meshes;
+            }
+
+            /*
+            if (src.Meshes.Count >= 2)
+            {
+                b.Meshes.Clear();
+                for (int count = 0; count < src.Meshes.Count; count++)
+                {
+                    if (count == 8)
+                    {
+                        b.Meshes.Add(src.Meshes[count]);
+                    }
+                    Console.Write($"{count}");
+                    continue;
+                }
+            }
+            */
 
 
-            if (cb1.Checked)
-                b.Materials = src.Materials;
+            if (cb1.Checked) {
+                if (materialsToKeep.Count > 0 && materialsToKeep.Count == b.Meshes.Count)
+                {
+                    b.Materials.Clear();
+                    foreach (int material in materialsToKeep)
+                    {
+                        b.Materials.Add(src.Materials[material]);
+                        int materialIndexIter = b.Materials.Count - 1;
+                        b.Meshes[materialIndexIter].MaterialIndex = materialIndexIter;
+                    }
+                }
+                else
+                {
+                    b.Materials = src.Materials;
+                }
+            }
 
             if (cb2.Checked)
                 b.Bones = src.Bones;
@@ -735,10 +802,10 @@ namespace MySFformat
                     b.Meshes[i].DefaultBoneIndex = 1;
                     foreach (FLVER.Vertex v in b.Meshes[i].Vertices)
                     {
-                        for (int j = 0; j < v.Positions.Count; j++)
+                        for (int j = 0; j < v.Position.Length(); j++)
                         {
                             if (v.BoneWeights == null) { continue; }
-                            v.Positions[j] = new System.Numerics.Vector3(0, 0, 0);
+                            v.Position = new System.Numerics.Vector3(0, 0, 0);
                             for (int k = 0; k < v.BoneWeights.Length; k++)
                             {
                                 v.BoneWeights[k] = 0;
@@ -754,14 +821,11 @@ namespace MySFformat
                 }
             }
 
-            foreach (FLVER.Mesh m in b.Meshes)
+            foreach (FLVER2.Mesh m in b.Meshes)
             {
                 foreach (FLVER.Vertex v in m.Vertices)
                 {
-                    for (int i = 0; i < v.Positions.Count; i++)
-                    {
-                        v.Positions[i] = new System.Numerics.Vector3(v.Positions[i].X + x, v.Positions[i].Y + y, v.Positions[i].Z + z);
-                    }
+                    v.Position = new System.Numerics.Vector3(v.Position.X + x, v.Position.Y + y, v.Position.Z + z);
                 }
 
             }

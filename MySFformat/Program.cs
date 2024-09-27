@@ -31,7 +31,7 @@ namespace MySFformat
     }
     static partial class Program 
     {
-        public static FLVER targetFlver;
+        public static FLVER2 targetFlver;
         public static TPF targetTPF = null;
         public static string flverName;
         public static List<DataGridViewTextBoxCell> boneNameList;
@@ -183,7 +183,7 @@ namespace MySFformat
                 if (targetFlver.Meshes[i] == null) { continue; }
                 foreach (var vi in targetFlver.Meshes[i].Vertices) 
                 {
-                    ans.Add(new VertexPositionColor(toXnaV3XZY(vi.Positions[0]), Microsoft.Xna.Framework.Color.Black));
+                    ans.Add(new VertexPositionColor(toXnaV3XZY(vi.Position), Microsoft.Xna.Framework.Color.Black));
 
                  }
 
@@ -216,8 +216,10 @@ namespace MySFformat
             c.R = 0;
             c.A = 255;
             for (int i = 0; i < 4; i++) {
-                if (v.BoneIndices[i] == mono.selectedBone) {
-                    c.R += Convert.ToByte(Math.Max(Math.Min(v.BoneWeights[i] * 255, 255), 0));
+                if (v.BoneIndices != null) {
+                    if (v.BoneIndices[i] == mono.selectedBone) {
+                        c.R += Convert.ToByte(Math.Max(Math.Min(v.BoneWeights[i] * 255, 255), 0));
+                    }
                 }
             }
             return c;
@@ -257,17 +259,17 @@ namespace MySFformat
                         cline.R = 255;
                     }
                     cline.A = 125;
-                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Positions[0]), cline));
-                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Positions[0]), cline));
-                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Positions[0]), cline));
-                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Positions[0]), cline));
-                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Positions[0]), cline));
-                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Positions[0]), cline));
+                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Position), cline));
+                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Position), cline));
+                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Position), cline));
+                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Position), cline));
+                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Position), cline));
+                    ans.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Position), cline));
 
                     Microsoft.Xna.Framework.Color c = new Microsoft.Xna.Framework.Color();
 
-                    Microsoft.Xna.Framework.Vector3 va = toXnaV3(vl[1].Positions[0]) - toXnaV3(vl[0].Positions[0]);
-                    Microsoft.Xna.Framework.Vector3 vb = toXnaV3(vl[2].Positions[0]) - toXnaV3(vl[0].Positions[0]);
+                    Microsoft.Xna.Framework.Vector3 va = toXnaV3(vl[1].Position) - toXnaV3(vl[0].Position);
+                    Microsoft.Xna.Framework.Vector3 vb = toXnaV3(vl[2].Position) - toXnaV3(vl[0].Position);
                     Microsoft.Xna.Framework.Vector3 vnromal = crossPorduct(va, vb);
                     vnromal.Normalize();
                     Microsoft.Xna.Framework.Vector3 light = new Microsoft.Xna.Framework.Vector3(mono.lightX, mono.lightY, mono.lightZ);
@@ -288,18 +290,18 @@ namespace MySFformat
 
 
 
-                    triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Positions[0]), c));
-                    triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Positions[0]), c));
-                    triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Positions[0]), c));
-                    weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Positions[0]), getWeightColor(vl[0])));
-                    weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Positions[0]), getWeightColor(vl[2])));
-                    weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Positions[0]), getWeightColor(vl[1])));
+                    triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Position), c));
+                    triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Position), c));
+                    triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Position), c));
+                    weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Position), getWeightColor(vl[0])));
+                    weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Position), getWeightColor(vl[2])));
+                    weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Position), getWeightColor(vl[1])));
 
                     if (loadTexture)
                     {
-                        textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[0].Positions[0]), c, new Microsoft.Xna.Framework.Vector2(vl[0].UVs[0].X, vl[0].UVs[0].Y)));
-                        textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[2].Positions[0]), c, new Microsoft.Xna.Framework.Vector2(vl[2].UVs[0].X, vl[2].UVs[0].Y)));
-                        textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[1].Positions[0]), c, new Microsoft.Xna.Framework.Vector2(vl[1].UVs[0].X, vl[1].UVs[0].Y)));
+                        textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[0].Position), c, new Microsoft.Xna.Framework.Vector2(vl[0].UVs[0].X, vl[0].UVs[0].Y)));
+                        textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[2].Position), c, new Microsoft.Xna.Framework.Vector2(vl[2].UVs[0].X, vl[2].UVs[0].Y)));
+                        textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[1].Position), c, new Microsoft.Xna.Framework.Vector2(vl[1].UVs[0].X, vl[1].UVs[0].Y)));
 
                     }
 
@@ -307,19 +309,19 @@ namespace MySFformat
 
                     if (renderBackFace)
                     {
-                        triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Positions[0]), c));
-                        triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Positions[0]), c));
-                        triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Positions[0]), c));
-                        weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Positions[0]), getWeightColor(vl[0])));
-                        weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Positions[0]), getWeightColor(vl[1])));
-                        weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Positions[0]), getWeightColor(vl[2])));
+                        triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Position), c));
+                        triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Position), c));
+                        triangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Position), c));
+                        weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[0].Position), getWeightColor(vl[0])));
+                        weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[1].Position), getWeightColor(vl[1])));
+                        weightTriangles.Add(new VertexPositionColor(toXnaV3XZY(vl[2].Position), getWeightColor(vl[2])));
 
 
                         if (loadTexture)
                         {
-                            textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[0].Positions[0]), c, new Microsoft.Xna.Framework.Vector2(vl[0].UVs[0].X, vl[0].UVs[0].Y)));
-                            textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[1].Positions[0]), c, new Microsoft.Xna.Framework.Vector2(vl[1].UVs[0].X, vl[1].UVs[0].Y)));
-                            textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[2].Positions[0]), c, new Microsoft.Xna.Framework.Vector2(vl[2].UVs[0].X, vl[2].UVs[0].Y)));
+                            textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[0].Position), c, new Microsoft.Xna.Framework.Vector2(vl[0].UVs[0].X, vl[0].UVs[0].Y)));
+                            textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[1].Position), c, new Microsoft.Xna.Framework.Vector2(vl[1].UVs[0].X, vl[1].UVs[0].Y)));
+                            textureTriangles.Add(new VertexPositionColorTexture(toXnaV3XZY(vl[2].Position), c, new Microsoft.Xna.Framework.Vector2(vl[2].UVs[0].X, vl[2].UVs[0].Y)));
 
                         }
 
@@ -328,7 +330,7 @@ namespace MySFformat
 
                 }
 
-                for (uint j = 0; j < targetFlver.Meshes[i].Vertices.Count;j++) 
+                for (uint j = 0; j < targetFlver.Meshes[i].Vertices.Count; j++) 
                 {
                     FLVER.Vertex v = targetFlver.Meshes[i].Vertices[(int)j];
                       vertices.Add(v);
@@ -338,12 +340,17 @@ namespace MySFformat
                     verticesInfo.Add(vi);
                 }
 
+                Console.WriteLine($"{targetFlver.Meshes[i].MaterialIndex}");
+                if(targetFlver.Meshes[i].MaterialIndex >= targetFlver.Materials.Count)
+                {
+                    targetFlver.Meshes[i].MaterialIndex = targetFlver.Materials.Count - 1;
+                }
                 MeshInfos mi = new MeshInfos();
-               var tName = targetFlver.Materials[ targetFlver.Meshes[i].MaterialIndex].Textures[0].Path;
-              tName = FindFileName(tName);
+                var tName = targetFlver.Materials[ targetFlver.Meshes[i].MaterialIndex].Textures[0].Path;
+                tName = FindFileName(tName);
                 mi.textureName = tName;
                 //MessageBox.Show("Found texture name:" + mi.textureName);
-               mi.triTextureVertices = textureTriangles.ToArray();
+                mi.triTextureVertices = textureTriangles.ToArray();
                 textureTriangles.Clear();
                 mis.Add(mi);
             }
@@ -379,7 +386,7 @@ namespace MySFformat
                 /*
                 for (int i = 0; i < targetFlver.Bones.Count && boneDisplay; i++)
                 {
-                    FLVER.Bone b = targetFlver.Bones[i];
+                    FLVER2.Bone b = targetFlver.Bones[i];
 
                     bsX[i] = new Vector3D(0,0,1);
                     bsY[i] = new Vector3D(0, 1, 0);
@@ -570,7 +577,7 @@ namespace MySFformat
 
             for (int i = 0; i < targetFlver.Dummies.Count && dummyDisplay; i++)
             {
-                FLVER.Dummy d = targetFlver.Dummies[i];
+                FLVER2.Dummy d = targetFlver.Dummies[i];
 
                 ans.Add(new VertexPositionColor(new Microsoft.Xna.Framework.Vector3(d.Position.X - 0.025f, d.Position.Z, d.Position.Y), Microsoft.Xna.Framework.Color.Purple));
                 ans.Add(new VertexPositionColor(new Microsoft.Xna.Framework.Vector3(d.Position.X + 0.025f, d.Position.Z, d.Position.Y), Microsoft.Xna.Framework.Color.Purple));
@@ -653,7 +660,7 @@ namespace MySFformat
                 return;
             }
             string fname = openFileDialog1.FileName;
-            FLVER b = null;
+            FLVER2 b = null;
             if (fname.Length > 4) 
             {
                 if (openFileDialog1.FileName.Substring(fname.Length-4) == ".dcx") 
@@ -661,6 +668,7 @@ namespace MySFformat
                     List<BinderFile> flverFiles = new List<BinderFile>();
                     //Support BND4(DS2,DS3,BB) only
                     var bnds = SoulsFormats.SoulsFile<SoulsFormats.BND4>.Read(openFileDialog1.FileName);
+                    var extension = "flver";
                 
                     Form cf = new Form();
                     cf.Size = new System.Drawing.Size(520,400);
@@ -677,16 +685,23 @@ namespace MySFformat
                     {
                         //  MessageBox.Show("Found:" + bf.Name);
 
-                        if (bf.Name.Contains(".flver")) 
+                        if (bf.Name.Contains(".flver"))
                         {
                             flverFiles.Add(bf);
                             lv.Items.Add(bf.Name);
-                        } else if (bf.Name.Length >= 4 && loadTexture)
+                        }
+                        else if (bf.Name.Contains(".flv"))
                         {
-                            if (bf.Name.Substring(bf.Name.Length-4) == ".tpf") 
+                            flverFiles.Add(bf);
+                            lv.Items.Add(bf.Name);
+                            extension = "flv";
+                        }
+                        else if (bf.Name.Length >= 4 && loadTexture)
+                        {
+                            if (bf.Name.Substring(bf.Name.Length - 4) == ".tpf")
                             {
                                 try { targetTPF = TPF.Read(bf.Bytes); } catch (Exception e) { MessageBox.Show("Unsupported tpf file"); }
-                             
+
                             }
 
                         }
@@ -700,9 +715,9 @@ namespace MySFformat
                     select.Click += (s, e) =>
                      {
                          if (lv.SelectedIndices.Count == 0) { return; }
-                         b = FLVER.Read( flverFiles[lv.SelectedIndices[0]].Bytes);
-                         openFileDialog1.FileName = openFileDialog1.FileName + "." + FindFileName(flverFiles[0].Name) + ".flver";
-                         flverName = openFileDialog1.FileName;
+                         b = FLVER2.Read( flverFiles[lv.SelectedIndices[0]].Bytes);
+                         openFileDialog1.FileName = openFileDialog1.FileName + "." + FindFileName(flverFiles[0].Name) + "." + extension;
+                         flverName = FindFileName(flverFiles[0].Name) + "." + extension;
                          cf.Close();
                      };
                         cf.Controls.Add(lv);
@@ -716,9 +731,9 @@ namespace MySFformat
                     }
                     else if (flverFiles.Count == 1)
                     {
-                        b = FLVER.Read(flverFiles[0].Bytes);
-                        openFileDialog1.FileName = openFileDialog1.FileName + "." + FindFileName(flverFiles[0].Name) + ".flver";
-                       flverName = openFileDialog1.FileName;
+                        b = FLVER2.Read(flverFiles[0].Bytes);
+                        openFileDialog1.FileName = openFileDialog1.FileName + "." + FindFileName(flverFiles[0].Name) + "." + extension;
+                        flverName = openFileDialog1.FileName;
                     } else 
                     {
                         cf.ShowDialog();
@@ -733,7 +748,7 @@ namespace MySFformat
 
             if (b == null) 
             {
-                b = FLVER.Read(openFileDialog1.FileName);
+                b = FLVER2.Read(openFileDialog1.FileName);
                 flverName = openFileDialog1.FileName;
             }
 
@@ -791,7 +806,7 @@ namespace MySFformat
              dg.Rows[index].Cells[0].Value = "1";
              dg.Rows[index].Cells[1].Value = "2";
              dg.Rows[index].Cells[2].Value = "监听";*/
-            var bindingList = new System.ComponentModel.BindingList<FLVER.Bone>(b.Bones);
+            var bindingList = new System.ComponentModel.BindingList<FLVER2.Bone>(b.Bones);
             //System.Data.DataTable dt = ToDataTable(b.Bones);
             //DataTable dt = new DataTable();
             //dt.Columns.Add(new DataColumn("index", typeof(string)));
@@ -833,8 +848,8 @@ namespace MySFformat
                 for (int i = 0; i < b.Bones.Count; i++)
 
                 {
-                    // foreach (FLVER.Bone bn in b.Bones)
-                    FLVER.Bone bn = b.Bones[i];
+                    // foreach (FLVER2.Bone bn in b.Bones)
+                    FLVER2.Bone bn = b.Bones[i];
                     //Console.WriteLine(bn.Name);
 
                     /* TextBox t = new TextBox();
@@ -1092,8 +1107,8 @@ namespace MySFformat
 "存储你修改的Json文本信息至你的Flver文件内。", button5);
             button5.Location = new System.Drawing.Point(435, 300);
             button5.Click += (s, e) => {
-                b.Bones = serializer.Deserialize<List<FLVER.Bone>>(tbones.Text);
-                b.Header = serializer.Deserialize<FLVER.FLVERHeader>(tbones2.Text);
+                b.Bones = serializer.Deserialize<List<FLVER2.Bone>>(tbones.Text);
+                b.Header = serializer.Deserialize<FLVER2.FLVERHeader>(tbones2.Text);
                 autoBackUp(); targetFlver.Write(flverName);
                 MessageBox.Show("Json bone change completed! Please exit the program!", "Info");
             };
@@ -1122,7 +1137,7 @@ namespace MySFformat
                                  MessageBoxButtons.YesNo);
                         if (confirmResult == DialogResult.Yes)
                         {
-                            List <FLVER.Bone> newBones = serializer.Deserialize<List<FLVER.Bone>>(res);
+                            List <FLVER2.Bone> newBones = serializer.Deserialize<List<FLVER2.Bone>>(res);
 
                             BoneWeightShift(newBones);
 
@@ -1130,7 +1145,7 @@ namespace MySFformat
                         }
                         else {
 
-                            targetFlver.Bones = serializer.Deserialize<List<FLVER.Bone>>(res);
+                            targetFlver.Bones = serializer.Deserialize<List<FLVER2.Bone>>(res);
                         }
 
 
@@ -1196,16 +1211,27 @@ namespace MySFformat
                     {
                         if (targetFlver.Bones[i].Name == "Pelvis")
                         {
-                            targetFlver.Bones[i].Rotation.Z = targetFlver.Bones[i].Rotation.Z + (float)Math.PI;
+                            // Original shit
+                            // targetFlver.Bones[i].Rotation.Z = targetFlver.Bones[i].Rotation.Z + (float)Math.PI;
+                            // Hackaround:
+                            FLVER2.Bone tempBone = new FLVER2.Bone();
+                            Vector3 tempShit = targetFlver.Bones[i].Rotation;
+                            tempShit.Z = targetFlver.Bones[i].Rotation.Z + (float)Math.PI;
+                            tempBone.Rotation = tempShit;
+                            targetFlver.Bones[i].Rotation = tempShit;
 
                             for (int j = 0; j < targetFlver.Bones.Count; j++)
                             {
                                 if (targetFlver.Bones[j].ParentIndex == i)
                                 {
-
+                                    FLVER2.Bone zBone = new FLVER2.Bone();
+                                    Vector3 zShit = targetFlver.Bones[j].Rotation;
+                                    zShit.Z = targetFlver.Bones[j].Rotation.Z + (float)Math.PI;
+                                    zBone.Rotation = zShit;
+                                    targetFlver.Bones[j].Rotation = zShit;
                                     //It seems that X controls foot:left right rotate dir : -- means left,
                                     //I recommend X -= 0.3
-                                    targetFlver.Bones[j].Rotation.Z = targetFlver.Bones[j].Rotation.Z + (float)Math.PI;
+                                    //targetFlver.Bones[j].Rotation.Z = targetFlver.Bones[j].Rotation.Z + (float)Math.PI;
                                     targetFlver.Bones[j].Translation *= -1; //it seems that y contorls forward/backward, 
                                 }
 
@@ -1229,19 +1255,32 @@ namespace MySFformat
                     // If 'Yes', do something here.
                     for (int i = 0; i < targetFlver.Bones.Count; i++)
                     {
+                        FLVER2.Bone someDumbAssMadethisShitPrivate = new FLVER2.Bone();
+                        Vector3 tempShitT = targetFlver.Bones[i].Translation;
+                        Vector3 tempShitR = targetFlver.Bones[i].Rotation;
+                        Vector3 tempShitS = targetFlver.Bones[i].Scale;
                         if (targetFlver.Bones[i].Name == "R_Foot" || targetFlver.Bones[i].Name == "L_Foot")
                         {
-                            targetFlver.Bones[i].Translation.X = 0.42884814f;
-                            targetFlver.Bones[i].Translation.Z = 0.02f;
+                            //targetFlver.Bones[i].Translation.X = 0.42884814f;
+                            //targetFlver.Bones[i].Translation.Z = 0.02f;
+                            tempShitT.X = 0.42884814f;
+                            tempShitT.Z = 0.02f;
+                            someDumbAssMadethisShitPrivate.Translation = tempShitT;
 
-                            targetFlver.Bones[i].Rotation.Y -= 0.01f;
+                            //targetFlver.Bones[i].Rotation.Y -= 0.01f;
+                            tempShitR.Y -= 0.01f;
+                            someDumbAssMadethisShitPrivate.Rotation = tempShitR;
                         } else if (targetFlver.Bones[i].Name == "R_Calf" || targetFlver.Bones[i].Name == "L_Calf")
                         {
-                            targetFlver.Bones[i].Scale.X = 1.1f;
+                            //targetFlver.Bones[i].Scale.X = 1.1f;
+                            tempShitS.X = 1.1f;
+                            someDumbAssMadethisShitPrivate.Scale = tempShitS;
                         }
                         else if (targetFlver.Bones[i].Name == "R_Toe0" || targetFlver.Bones[i].Name == "L_Toe0")
                         {
-                            targetFlver.Bones[i].Translation.X += 0.02f;
+                            //targetFlver.Bones[i].Translation.X += 0.02f;
+                            tempShitT.X += 0.02f;
+                            someDumbAssMadethisShitPrivate.Translation = tempShitT;
                         }
 
 
@@ -1262,36 +1301,48 @@ namespace MySFformat
                     // If 'Yes', do something here.
                     for (int i = 0; i < targetFlver.Bones.Count; i++)
                     {
-                        FLVER.Bone bone = targetFlver.Bones[i];
+                        FLVER2.Bone bone = targetFlver.Bones[i];
+                        Vector3 tempBoneT = bone.Translation;
+                        Vector3 tempBoneS = bone.Scale;
                         if (bone.Name == "L_Clavicle")
                         {
-                            bone.Translation.Y += 0.05f;
+                            tempBoneT.Y = bone.Translation.Y + 0.05f;
+                            bone.Translation = tempBoneT;
 
                         }
                         else if (targetFlver.Bones[i].Name == "R_Clavicle")
                         {
-                            bone.Translation.Y -= 0.05f;
+                            tempBoneT.Y = bone.Translation.Y - 0.05f;
+                            bone.Translation = tempBoneT;
 
                         }
                         else if (targetFlver.Bones[i].Name == "L_UpperArm")
                         {
-                            bone.Translation.Y -= 0.05f;
-                            bone.Translation.Z -= 0.02f;
-                            bone.Scale.X = 0.9f;
+                            tempBoneT.Y = bone.Translation.Y - 0.05f;
+                            tempBoneT.Z = bone.Translation.Z - 0.02f;
+                            bone.Translation = tempBoneT;
+
+                            tempBoneS.X = 0.9f;
+                            bone.Scale = tempBoneS;
                         }
                         else if (targetFlver.Bones[i].Name == "R_UpperArm")
                         {
-                            bone.Translation.Y += 0.05f;
-                            bone.Translation.Z -= 0.02f;
-                            bone.Scale.X = 0.9f;
+                            tempBoneT.Y = bone.Translation.Y + 0.05f;
+                            tempBoneT.Z = bone.Translation.Z - 0.02f;
+                            bone.Translation = tempBoneT;
+
+                            tempBoneS.X = 0.9f;
+                            bone.Scale = tempBoneS;
                         }
                         else if (targetFlver.Bones[i].Name == "L_Forearm")
                         {
-                            bone.Scale.X = 1.1f;
+                            tempBoneS.X = 1.1f;
+                            bone.Scale = tempBoneS;
                         }
                         else if (targetFlver.Bones[i].Name == "R_Forearm")
                         {
-                            bone.Scale.X = 1.1f;
+                            tempBoneS.X = 1.1f;
+                            bone.Scale = tempBoneS;
                         }
 
 
@@ -1419,7 +1470,7 @@ namespace MySFformat
             p.AutoScroll = true;
             string assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             string dummyStr = File.ReadAllText(assemblyPath + "\\dummyInfo.dll");
-            List<FLVER.Dummy> refDummy = new JavaScriptSerializer().Deserialize<List<FLVER.Dummy>>(dummyStr);
+            List<FLVER2.Dummy> refDummy = new JavaScriptSerializer().Deserialize<List<FLVER2.Dummy>>(dummyStr);
 
             //Console.WriteLine(dummyStr);
 
@@ -1531,10 +1582,16 @@ namespace MySFformat
                 int i = int.Parse(t.Text);
                 if (i >= 0 && i < targetFlver.Dummies.Count)
                 {
+                    //targetFlver.Dummies[i].Position += float.Parse(tX.Text);
+                    //targetFlver.Dummies[i].Position += float.Parse(tY.Text);
+                    //targetFlver.Dummies[i].Position += float.Parse(tZ.Text);
 
-                    targetFlver.Dummies[i].Position.X += float.Parse(tX.Text);
-                    targetFlver.Dummies[i].Position.Y += float.Parse(tY.Text);
-                    targetFlver.Dummies[i].Position.Z += float.Parse(tZ.Text);
+                    FLVER2.Dummy tempDummy = targetFlver.Dummies[i];
+                    Vector3 tempPos = targetFlver.Dummies[i].Position;
+                    tempPos.X += float.Parse(tX.Text);
+                    tempPos.Y += float.Parse(tY.Text);
+                    tempPos.Z += float.Parse(tZ.Text);
+                    targetFlver.Dummies[i].Position = tempPos;
                     autoBackUp(); targetFlver.Write(flverName);
                     updateVertices();
                 }
@@ -1552,7 +1609,7 @@ namespace MySFformat
             button2.Text = "JsonMod";
             button2.Location = new System.Drawing.Point(650, 100);
             button2.Click += (s, e) => {
-                targetFlver.Dummies = serializer.Deserialize<List<FLVER.Dummy>>(tbones.Text);
+                targetFlver.Dummies = serializer.Deserialize<List<FLVER2.Dummy>>(tbones.Text);
                 autoBackUp(); targetFlver.Write(flverName);
                 updateVertices();
                 MessageBox.Show("Dummy change completed! Please exit the program!", "Info");
@@ -1574,7 +1631,7 @@ namespace MySFformat
                         var sr = new StreamReader(openFileDialog1.FileName);
                         res = sr.ReadToEnd();
                         sr.Close();
-                        targetFlver.Dummies = serializer.Deserialize<List<FLVER.Dummy>>(res);
+                        targetFlver.Dummies = serializer.Deserialize<List<FLVER2.Dummy>>(res);
                         autoBackUp(); targetFlver.Write(flverName);
                         updateVertices();
                         MessageBox.Show("Dummy change completed! Please exit the program!", "Info");
@@ -1597,7 +1654,7 @@ namespace MySFformat
             buttonFix.Click += (s, e) => {
 
 
-                // targetFlver.Dummies = serializer.Deserialize<List<FLVER.Dummy>>(res);
+                // targetFlver.Dummies = serializer.Deserialize<List<FLVER2.Dummy>>(res);
                 //autoBackUp();targetFlver.Write(flverName);
                 for (int i = 0; i < refDummy.Count; i++)
                 {
@@ -1645,7 +1702,7 @@ namespace MySFformat
             f.ShowDialog();
         }
 
-        static int findFLVER_Bone(FLVER f, string name)
+        static int findFLVER_Bone(FLVER2 f, string name)
         {
             for (int flveri = 0; flveri < f.Bones.Count; flveri++)
             {
@@ -1669,7 +1726,7 @@ namespace MySFformat
             p.AutoScroll = true;
             string assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             string dummyStr = File.ReadAllText(assemblyPath + "\\dummyInfo.dll");
-            // List<FLVER.Dummy> refDummy = new JavaScriptSerializer().Deserialize<List<FLVER.Dummy>>(dummyStr);
+            // List<FLVER2.Dummy> refDummy = new JavaScriptSerializer().Deserialize<List<FLVER2.Dummy>>(dummyStr);
 
             //Console.WriteLine(dummyStr);
 
@@ -1713,7 +1770,7 @@ namespace MySFformat
             button2.Text = "JsonMod";
             button2.Location = new System.Drawing.Point(650, 100);
             button2.Click += (s, e) => {
-                targetFlver.BufferLayouts = serializer.Deserialize<List<FLVER.BufferLayout>>(tbones.Text);
+                targetFlver.BufferLayouts = serializer.Deserialize<List<FLVER2.BufferLayout>>(tbones.Text);
                 autoBackUp(); targetFlver.Write(flverName);
                 updateVertices();
                 MessageBox.Show("Dummy change completed! Please exit the program!", "Info");
@@ -1734,7 +1791,7 @@ namespace MySFformat
                         var sr = new StreamReader(openFileDialog1.FileName);
                         res = sr.ReadToEnd();
                         sr.Close();
-                        targetFlver.BufferLayouts = serializer.Deserialize<List<FLVER.BufferLayout>>(res);
+                        targetFlver.BufferLayouts = serializer.Deserialize<List<FLVER2.BufferLayout>>(res);
                         autoBackUp(); targetFlver.Write(flverName);
                         updateVertices();
                         MessageBox.Show("Dummy change completed! Please exit the program!", "Info");
@@ -1818,8 +1875,8 @@ namespace MySFformat
             for (int i = 0; i < targetFlver.Materials.Count; i++)
 
             {
-                // foreach (FLVER.Bone bn in b.Bones)
-                FLVER.Material bn = targetFlver.Materials[i];
+                // foreach (FLVER2.Bone bn in b.Bones)
+                FLVER2.Material bn = targetFlver.Materials[i];
                 //Console.WriteLine(bn.Name);
 
                 TextBox t = new TextBox();
@@ -1837,14 +1894,14 @@ namespace MySFformat
                 TextBox t2 = new TextBox();
                 t2.Size = new System.Drawing.Size(70, 15);
                 t2.Location = new System.Drawing.Point(270, currentY);
-                t2.Text = bn.Flags + ",GX" + bn.GXBytes + ",Unk" + bn.Unk18;
+                t2.Text = bn.Flags + ",GX" + bn.GXIndex + ",Unk" + bn.Unk18;
                 p.Controls.Add(t2);
 
                 /* TextBox t3 = new TextBox();
                  t3.Size = new System.Drawing.Size(770, 15);
                  t3.Location = new System.Drawing.Point(340, currentY);
                  string allMat = "";
-                 foreach (FLVER.Texture tex in bn.Textures)
+                 foreach (FLVER2.Texture tex in bn.Textures)
                  {
                      if (tex.Type == "g_DiffuseTexture")
                       {
@@ -1883,7 +1940,7 @@ namespace MySFformat
 
                     materialQuickEdit(targetFlver.Materials[btnI],btnI);
 
-                    //mes = jse.Deserialize<FLVER.Mesh>(jse.Serialize(mes));
+                    //mes = jse.Deserialize<FLVER2.Mesh>(jse.Serialize(mes));
                     // mes.Vertices = null;
                     
                     //updateVertices();
@@ -1899,7 +1956,7 @@ namespace MySFformat
                 childList.Add(t3);*/
             }
 
-            /*  var xmlserializer = new XmlSerializer(typeof( List<FLVER.Material>));
+            /*  var xmlserializer = new XmlSerializer(typeof( List<FLVER2.Material>));
               var stringWriter = new StringWriter();
               string res;
               using (var writer = XmlWriter.Create(stringWriter))
@@ -1946,7 +2003,17 @@ namespace MySFformat
             button2.Text = "ModifyJson";
             button2.Location = new System.Drawing.Point(650, btnY);
             button2.Click += (s, e) => {
-                targetFlver.Materials = serializer.Deserialize<List<FLVER.Material>>(tbones.Text);
+                /*List<SoulsFormats.FLVER2.Material> tempFlvMaterials = targetFlver.Materials;
+                tempFlvMaterials = serializer.Deserialize<List<FLVER2.Material>>(tbones.Text);
+                if (targetFlver.Meshes.Count() > tempFlvMaterials.Count())
+                {
+                    targetFlver.Materials.Clear();
+                    foreach(FLVER2.Material tempMat in tempFlvMaterials)
+                    {
+                        targetFlver.Materials.Add(tempMat);
+                    }
+                }*/
+                targetFlver.Materials = serializer.Deserialize<List<FLVER2.Material>>(tbones.Text);
                 autoBackUp(); targetFlver.Write(flverName);
                 MessageBox.Show("Material change completed! Please exit the program!", "Info");
             };
@@ -1968,7 +2035,7 @@ namespace MySFformat
                         var sr = new StreamReader(openFileDialog1.FileName);
                         res = sr.ReadToEnd();
                         sr.Close();
-                        targetFlver.Materials = serializer.Deserialize<List<FLVER.Material>>(res);
+                        targetFlver.Materials = serializer.Deserialize<List<FLVER2.Material>>(res);
                         autoBackUp(); targetFlver.Write(flverName);
                         MessageBox.Show("Material change completed! Please exit the program!", "Info");
                     }
@@ -2005,7 +2072,7 @@ namespace MySFformat
             buttonARSN.Location = new System.Drawing.Point(650, btnY);
             buttonARSN.Click += (s, e) => {
 
-                foreach (FLVER.Material m in targetFlver.Materials)
+                foreach (FLVER2.Material m in targetFlver.Materials)
                 {
                     var confirmResult = MessageBox.Show("Convert <" + m.Name + ">'s material to M[ARSN].mtd?",
                                    "Convertion",
@@ -2023,7 +2090,7 @@ namespace MySFformat
                         m.MTD = "M[ARSN].mtd";
                     }
 
-                    foreach (FLVER.Texture t in m.Textures)
+                    foreach (FLVER2.Texture t in m.Textures)
                     {
                         if (t.Path.IndexOf("_a.tif") >= 0)
                         {
@@ -2056,7 +2123,7 @@ namespace MySFformat
             buttonDMY.Location = new System.Drawing.Point(650, btnY);
             buttonDMY.Click += (s, e) => {
 
-                foreach (FLVER.Material m in targetFlver.Materials)
+                foreach (FLVER2.Material m in targetFlver.Materials)
                 {
                     var confirmResult = MessageBox.Show("Convert <" + m.Name + ">'s material to c9990_dummy.mtd?",
                                    "Convertion",
@@ -2075,7 +2142,7 @@ namespace MySFformat
                         m.MTD = "N:\\NTC\\data\\Material\\mtd\\character\\c9990_dummy.mtd";
                     }
 
-                    foreach (FLVER.Texture t in m.Textures)
+                    foreach (FLVER2.Texture t in m.Textures)
                     {
                         if (t.Path.IndexOf("_a.tif") >= 0)
                         {
@@ -2402,15 +2469,15 @@ namespace MySFformat
             for (int i = 0; i < targetFlver.Meshes.Count; i++)
 
             {
-                // foreach (FLVER.Bone bn in b.Bones)
-                FLVER.Mesh bn = targetFlver.Meshes[i];
+                // foreach (FLVER2.Bone bn in b.Bones)
+                FLVER2.Mesh bn = targetFlver.Meshes[i];
                 //Console.WriteLine(bn.MaterialIndex);
 
                 TextBox t = new TextBox();
                 t.Size = new System.Drawing.Size(200, 15);
                 t.Location = new System.Drawing.Point(70, currentY);
                 t.ReadOnly = true;
-                t.Text = "[M:" + targetFlver.Materials[bn.MaterialIndex].Name + "],Unk1:" + bn.Unk1 + ",Dyna:" + bn.Dynamic;
+                t.Text = "[M:" + targetFlver.Materials[bn.MaterialIndex].Name + "],Unk1:" + ",Dyna:" + bn.Dynamic;
                 p.Controls.Add(t);
 
                 Label l = new Label();
@@ -2452,24 +2519,29 @@ namespace MySFformat
 
                     useCheckingMesh = true;
                     checkingMeshNum = btnI;
-                    FLVER.Mesh mes = targetFlver.Meshes[btnI];
+                    FLVER2.Mesh mes = targetFlver.Meshes[btnI];
                     JavaScriptSerializer jse = new JavaScriptSerializer();
 
-                    FLVER.Mesh m2 = new FLVER.Mesh();
+                    FLVER2.Mesh m2 = new FLVER2.Mesh();
                     m2.Vertices = new List<FLVER.Vertex>();
+                    m2.BoundingBox = new FLVER2.Mesh.BoundingBoxes();
                     m2.VertexBuffers = mes.VertexBuffers;
-                    m2.Unk1 = mes.Unk1;
+                    //m2.Unk1 = mes.Unk1;
                     m2.MaterialIndex = mes.MaterialIndex;
-                    m2.FaceSets = jse.Deserialize<List<FLVER.FaceSet>>(jse.Serialize(mes.FaceSets));
-                    foreach (FLVER.FaceSet fs in m2.FaceSets)
+                    m2.FaceSets = jse.Deserialize<List<FLVER2.FaceSet>>(jse.Serialize(mes.FaceSets));
+                    foreach (FLVER2.FaceSet fs in m2.FaceSets)
                     {
-                        fs.Vertices = null;
+                        fs.Indices = null;
                     }
                     m2.Dynamic = mes.Dynamic;
                     m2.DefaultBoneIndex = mes.DefaultBoneIndex;
-                    m2.BoundingBoxUnk = mes.BoundingBoxUnk;
-                    m2.BoundingBoxMin = mes.BoundingBoxMin;
-                    m2.BoundingBoxMax = mes.BoundingBoxMax;
+                    // Bounding boxes can be null. If they aren't, set the new vals to the old. If they are, they retain default vals.
+                    if (mes.BoundingBox != null)
+                    {
+                        m2.BoundingBox.Unk = mes.BoundingBox.Unk;
+                        m2.BoundingBox.Min = mes.BoundingBox.Min;
+                        m2.BoundingBox.Max = mes.BoundingBox.Max;
+                    }
                     m2.BoneIndices = mes.BoneIndices;
 
 
@@ -2493,7 +2565,7 @@ namespace MySFformat
                 buttonTBF.Click += (s, e) => {
 
                     
-                    FLVER.Mesh mes = targetFlver.Meshes[btnI];
+                    FLVER2.Mesh mes = targetFlver.Meshes[btnI];
                     foreach (var vfs in mes.FaceSets)
                     { vfs.CullBackfaces = !vfs.CullBackfaces; }
                     updateVertices();
@@ -2614,7 +2686,7 @@ namespace MySFformat
                     float z = float.Parse(scaleZ.Text);
                     foreach (FLVER.Vertex v in targetFlver.Meshes[i].Vertices)
                     {
-                        for (int j = 0; j < v.Positions.Count; j++)
+                        for (int j = 0; j < v.Position.Length(); j++)
                         {
                             int xs = 1;
                             int ys = 1;
@@ -2624,7 +2696,7 @@ namespace MySFformat
                             if (x < 0) { xs = -1; }
                             if (y < 0) { ys = -1; }
                             if (z < 0) { zs = -1; }
-                            v.Normals[j] = new Vector4(v.Normals[j].X * xs, v.Normals[j].Y * ys, v.Normals[j].Z * zs, v.Normals[j].W);
+                            v.Normal = new Vector4(v.Normal.X * xs, v.Normal.Y * ys, v.Normal.Z * zs, v.Normal.W);
 
 
                         }
@@ -2726,10 +2798,10 @@ namespace MySFformat
                         {
                             foreach (var mf in targetFlver.Meshes[i].FaceSets)
                             {
-                                for (uint facei = 0; facei < mf.Vertices.Length; facei++)
+                                for (int facei = 0; facei < mf.Indices.Count(); facei++)
                                 {
                                     //  mf.Vertices[facei] = facei%3;
-                                    mf.Vertices[facei] = 1;
+                                    mf.Indices[facei] = 1;
                                 }
 
                             }
@@ -2738,9 +2810,9 @@ namespace MySFformat
                         else {
                             foreach (FLVER.Vertex v in targetFlver.Meshes[i].Vertices)
                             {
-                                for (int j = 0; j < v.Positions.Count; j++)
+                                for (int j = 0; j < v.Position.Length(); j++)
                                 {
-                                    v.Positions[j] = new System.Numerics.Vector3(0, 0, 0);
+                                    v.Position = new System.Numerics.Vector3(0, 0, 0);
                                     if (v.BoneWeights == null)
                                     {
 
@@ -2755,7 +2827,7 @@ namespace MySFformat
                             }
                             foreach (var mf in targetFlver.Meshes[i].FaceSets)
                             {
-                                mf.Vertices = new uint[0] { };
+                                mf.Indices = new List<int>();
 
                             }
 
@@ -2770,11 +2842,11 @@ namespace MySFformat
                     {
                         foreach (FLVER.Vertex v in targetFlver.Meshes[i].Vertices)
                         {
-                            if (v.Positions == null) { v.Positions = new List<Vector3>(); }
-                            for (int j = 0; j < v.Positions.Count; j++)
+                            if (v.Position == null) { v.Position = new Vector3(); }
+                            for (int j = 0; j < v.Position.Length(); j++)
                             {
                                 if (v.BoneWeights == null) { v.BoneWeights = new float[4]; v.BoneIndices = new int[4]; }
-                                //v.Positions[j] = new System.Numerics.Vector3(0, 0, 0);
+                                v.Position = new System.Numerics.Vector3(0, 0, 0);
                                 for (int k = 0; k < v.BoneWeights.Length; k++)
                                 {
                                     v.BoneWeights[k] = 0;
@@ -2797,12 +2869,7 @@ namespace MySFformat
                         float z = float.Parse(transZ.Text);
                         foreach (FLVER.Vertex v in targetFlver.Meshes[i].Vertices)
                         {
-                            for (int j = 0; j < v.Positions.Count; j++)
-                            {
-                                v.Positions[j] = new Vector3(v.Positions[j].X + x, v.Positions[j].Y + y, v.Positions[j].Z + z);
-                            }
-
-
+                            v.Position = new Vector3(v.Position.X + x, v.Position.Y + y, v.Position.Z + z);
                         }
 
                     }
@@ -2823,17 +2890,10 @@ namespace MySFformat
 
 
                         foreach (FLVER.Vertex v in targetFlver.Meshes[i].Vertices)
-                        {
-                            for (int j = 0; j < v.Positions.Count; j++)
-                            {
-                                v.Positions[j] = RotatePoint(v.Positions[j], pitch, roll, yaw);
-                            }
+                        {                                                            v.Position = RotatePoint(v.Position, pitch, roll, yaw);
+                            v.Position = RotatePoint(v.Position, pitch, roll, yaw);
+                            v.Normal = RotatePoint(v.Normal, pitch, roll, yaw);
 
-                            for (int j2 = 0; j2 < v.Normals.Count; j2++)
-                            {
-                                v.Normals[j2] = RotatePoint(v.Normals[j2], pitch, roll, yaw);
-
-                            }
                             for (int j2 = 0; j2 < v.Tangents.Count; j2++)
                             {
 
@@ -2852,9 +2912,9 @@ namespace MySFformat
                         float z = float.Parse(scaleZ.Text);
                         foreach (FLVER.Vertex v in targetFlver.Meshes[i].Vertices)
                         {
-                            for (int j = 0; j < v.Positions.Count; j++)
+                            for (int j = 0; j < v.Tangents.Count; j++)
                             {
-                                v.Positions[j] = new Vector3(v.Positions[j].X * x, v.Positions[j].Y * y, v.Positions[j].Z * z);
+                                v.Position = new Vector3(v.Position.X * x, v.Position.Y * y, v.Position.Z * z);
                                 int xs = 1;
                                 int ys = 1;
                                 int zs = 1;
@@ -2863,7 +2923,7 @@ namespace MySFformat
                                 if (x < 0) { xs = -1; }
                                 if (y < 0) { ys = -1; }
                                 if (z < 0) { zs = -1; }
-                                v.Normals[j] = new Vector4(v.Normals[j].X * xs, v.Normals[j].Y * ys, v.Normals[j].Z * zs, v.Normals[j].W);
+                                v.Normal = new Vector4(v.Normal.X * xs, v.Normal.Y * ys, v.Normal.Z * zs, v.Normal.W);
                                 v.Tangents[j] = new Vector4(v.Tangents[j].X * xs, v.Tangents[j].Y * ys, v.Tangents[j].Z * zs, v.Tangents[j].W);
 
                             }
@@ -2882,9 +2942,9 @@ namespace MySFformat
 
                         foreach (FLVER.Vertex v in targetFlver.Meshes[i].Vertices)
                         {
-                            for (int j = 0; j < v.Positions.Count; j++)
+                            for (int j = 0; j < v.Position.Length(); j++)
                             {
-                                //v.Positions[j] = new System.Numerics.Vector3(0, 0, 0);
+                                //v.Position = new System.Numerics.Vector3(0, 0, 0);
                                 if (v.BoneIndices != null)
                                 {
                                     for (int k = 0; k < v.BoneIndices.Length; k++)
@@ -2905,7 +2965,7 @@ namespace MySFformat
                 }
                 if (dummyCb.Checked)
                 {
-                    foreach (FLVER.Dummy d in targetFlver.Dummies)
+                    foreach (FLVER2.Dummy d in targetFlver.Dummies)
                     {
                         if (transCb.Checked)
                         {
@@ -2913,9 +2973,15 @@ namespace MySFformat
                             float y = float.Parse(transY.Text);
                             float z = float.Parse(transZ.Text);
 
-                            d.Position.X += x;
-                            d.Position.Y += y;
-                            d.Position.Z += z;
+
+                            //d.Position.X += x;
+                            //d.Position.Y += y;
+                            //d.Position.Z += z;
+                            Vector3 tempPos = d.Position;
+                            tempPos.X += x;
+                            tempPos.Y += y;
+                            tempPos.Z += z;
+                            d.Position = tempPos;
                         }
                         if (rotCb.Checked)
                         {
@@ -2931,9 +2997,14 @@ namespace MySFformat
                             float y = float.Parse(scaleY.Text);
                             float z = float.Parse(scaleZ.Text);
 
-                            d.Position.X *= x;
-                            d.Position.Y *= y;
-                            d.Position.Z *= z;
+                            //d.Position.X *= x;
+                            //d.Position.Y *= y;
+                            //d.Position.Z *= z;
+                            Vector3 tempPos = d.Position;
+                            tempPos.X *= x;
+                            tempPos.Y *= y;
+                            tempPos.Z *= z;
+                            d.Position = tempPos;
                         }
                     }
                 }
@@ -2945,13 +3016,18 @@ namespace MySFformat
                     float y = float.Parse(scaleY.Text);
                     float z = float.Parse(scaleZ.Text);
                     //1.67: update affect bone functionality
-                    foreach (FLVER.Bone bs in targetFlver.Bones)
+                    foreach (FLVER2.Bone bs in targetFlver.Bones)
                     {
                         if (true)
                         {
-                            bs.Translation.X = x * bs.Translation.X;
-                            bs.Translation.Y = y * bs.Translation.Y;
-                            bs.Translation.Z = z * bs.Translation.Z;
+                            //bs.Translation.X = x * bs.Translation.X;
+                            //bs.Translation.Y = y * bs.Translation.Y;
+                            //bs.Translation.Z = z * bs.Translation.Z;
+                            Vector3 tempTranslation = bs.Translation;
+                            tempTranslation.X = x * bs.Translation.X;
+                            tempTranslation.Y = y * bs.Translation.Y;
+                            tempTranslation.Z = z * bs.Translation.Z;
+                            bs.Translation = tempTranslation;
 
                             //   bs.Scale.X *= x;
                             // bs.Scale.Y *= y;
@@ -2984,14 +3060,48 @@ namespace MySFformat
                 {
                     try
                     {
-                        FLVER sekiro = FLVER.Read(openFileDialog1.FileName);
+                        FLVER2 sekiro = FLVER2.Read(openFileDialog1.FileName);
+  /*This section will allow you to read a flver in and write a flver from scratch
+                        FLVER2 sekiro = targetFlver;
+                        // My shit starts here
+                        FLVER2 myShitFile = new FLVER2();
+                        FileInfo targetFile = new FileInfo(openFileDialog1.FileName);
+                        FileStream fs = targetFile.OpenRead();
+                        long targetLength = targetFile.Length;
+                        long toRead = targetLength;
+                        long bytesRead = 0;
+
+                        BinaryReaderEx br = new BinaryReaderEx(false, fs);
+                        br.BigEndian = false;
+
+                        myShitFile.Header = new FLVER2.FLVERHeader();
+                        br.AssertASCII("FLVER\0");
+                        myShitFile.Header.BigEndian = br.AssertASCII("L\0", "B\0") == "B\0";
+                        br.BigEndian = myShitFile.Header.BigEndian;
+                        // SFS: 20010
+                        myShitFile.Header.Version = br.AssertInt32(0x20005, 0x20007, 0x20009, 0x2000B, 0x2000C, 0x2000D, 0x2000E, 0x2000F, 0x20010, 0x20013, 0x20014, 0x20016, 0x2001A);
+                        
+                        int dataOffset = br.ReadInt32();
+                        int dataLength = br.ReadInt32();
+                        Console.WriteLine($"Data offset: {dataOffset}");
+                        Console.WriteLine($"Data length: {dataLength}");
+
+                        fs.Close();
+                        targetFile = new FileInfo(openFileDialog1.FileName + "NEW.flv");
+                        fs = targetFile.OpenWrite();
+                        BinaryWriterEx bw = new BinaryWriterEx(false, fs);
+                        
+                        bw.ReserveInt32("dataOffset");
+                        bw.ReserveInt32("dataLength");
+                        // My shit ends above this line
+  */
                         int materialOffset = targetFlver.Materials.Count;
                         int layoutOffset = targetFlver.BufferLayouts.Count;
 
                         Dictionary<int, int> sekiroToTarget = new Dictionary<int, int>();
                         for (int i2 = 0; i2 < sekiro.Bones.Count; i2++)
                         {
-                            FLVER.Bone attachBone = sekiro.Bones[i2];
+                            FLVER2.Bone attachBone = sekiro.Bones[i2];
                             for (int i3 = 0; i3 < targetFlver.Bones.Count; i3++)
                             {
                                 if (attachBone.Name == targetFlver.Bones[i3].Name)
@@ -3005,10 +3115,10 @@ namespace MySFformat
 
 
 
-                        foreach (FLVER.Mesh m in sekiro.Meshes)
+                        foreach (FLVER2.Mesh m in sekiro.Meshes)
                         {
                             m.MaterialIndex += materialOffset;
-                            foreach (FLVER.VertexBuffer vb in m.VertexBuffers)
+                            foreach (FLVER2.VertexBuffer vb in m.VertexBuffers)
                             {
                                 // vb.BufferIndex += layoutOffset;
                                 vb.LayoutIndex += layoutOffset;
@@ -3041,16 +3151,25 @@ namespace MySFformat
                         targetFlver.Meshes = targetFlver.Meshes.Concat(sekiro.Meshes).ToList();
 
                         targetFlver.Materials = targetFlver.Materials.Concat(sekiro.Materials).ToList();
+                        foreach(FLVER2.Mesh bfl in targetFlver.Meshes)
+                        {
+                            Console.WriteLine($"FUCKING DEBUG: {bfl.ToString()}");
+                            Console.Write($"{bfl.BoneIndices.Count()}\n");
+                            Console.Write($"{String.Join(", ", bfl.BoneIndices)}\n");
+                            Console.Write($"{bfl.MaterialIndex}\n");
+                            Console.Write($"{bfl.VertexBuffers.Count()}\n\n\n");
+                        }
                         //sekiro.Meshes[0].MaterialIndex
 
                         //targetFlver.Materials =  new JavaScriptSerializer().Deserialize<List<FLVER.Material>>(res);
-                        autoBackUp(); targetFlver.Write(flverName);
+                        autoBackUp(); 
+                        targetFlver.Write(flverName);
                         MessageBox.Show("Attaching new flver file completed! Please exit the program!", "Info");
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show($"Security error.\n\nError message: {ex.Message}\n\n" +
-                        $"Details:\n\n{ex.StackTrace}");
+                        $"Details:\n\n{ex.StackTrace}\n\n{ex.Source}");
                     }
                 }
 
@@ -3097,7 +3216,7 @@ namespace MySFformat
                     }
                 }
 
-                foreach (FLVER.Mesh m in targetFlver.Meshes)
+                foreach (FLVER2.Mesh m in targetFlver.Meshes)
                 {
 
                     foreach (FLVER.Vertex vi in m.Vertices)
@@ -3105,15 +3224,15 @@ namespace MySFformat
 
                         if (vi.Colors == null)
                         {
-                            vi.Colors = new List<FLVER.Vertex.Color>();
-                            vi.Colors.Add(new FLVER.Vertex.Color(255, r, g, b));
+                            vi.Colors = new List<FLVER.VertexColor>();
+                            vi.Colors.Add(new FLVER.VertexColor(255, r, g, b));
                         }
                         else if (vi.Colors.Count == 0)
                         {
-                            vi.Colors.Add(new FLVER.Vertex.Color(255, r, g, b));
+                            vi.Colors.Add(new FLVER.VertexColor(255, r, g, b));
                         }
                         else {
-                            vi.Colors[0] = new FLVER.Vertex.Color(255, r, g, b);
+                            vi.Colors[0] = new FLVER.VertexColor(255, r, g, b);
                         }
                     }
 
@@ -3125,7 +3244,7 @@ namespace MySFformat
                                    MessageBoxButtons.YesNo);
                 if (confirmResult3 == DialogResult.Yes)
                 {
-                    foreach (FLVER.Material m in targetFlver.Materials)
+                    foreach (FLVER2.Material m in targetFlver.Materials)
                     {
                         if (m.MTD.IndexOf("_e") >= 0)
                         {
@@ -3135,7 +3254,7 @@ namespace MySFformat
                             m.MTD = "M[ARSN].mtd";
                         }
 
-                        foreach (FLVER.Texture t in m.Textures)
+                        foreach (FLVER2.Texture t in m.Textures)
                         {
                             if (t.Path.IndexOf("_a.tif") >= 0)
                             {
@@ -3154,7 +3273,7 @@ namespace MySFformat
                 }
 
 
-                var confirmResult2 = MessageBox.Show("Add color part to buffer layout? (If this model does not show in sekiro please click yes!)",
+                /*var confirmResult2 = MessageBox.Show("Add color part to buffer layout? (If this model does not show in sekiro please click yes!)",
                                     "Set",
                                     MessageBoxButtons.YesNo);
                 if (confirmResult2 == DialogResult.No)
@@ -3164,7 +3283,7 @@ namespace MySFformat
                     MessageBox.Show("Giving every vertex a color completed! Please exit the program!", "Info");
                     return;
                 }
-                foreach (FLVER.BufferLayout bl in targetFlver.BufferLayouts)
+                foreach (FLVER2.BufferLayout bl in targetFlver.BufferLayouts)
                 {
                     //Sematic: 0:Position, 1: bone weight, 2: bone indices, 3:Normal, 5:UV 6: Tangent, 10:Vertex color
                     //{"Unk00":0,"StructOffset":24,"Type":19,"Semantic":10,"Index":1,"Size":4},{"Unk00":0,"StructOffset":28,"Type":22,"Semantic":5,"Index":0,"Size":8}],
@@ -3172,7 +3291,7 @@ namespace MySFformat
                     Boolean hasColorLayout = false;
                     for (int i = 0; i < bl.Count; i++)
                     {
-                        if (bl[i].Semantic == FLVER.BufferLayout.MemberSemantic.VertexColor)
+                        if (bl[i].Semantic == FLVER2.BufferLayout.MemberSemantic.VertexColor)
                         {
                             hasColorLayout = true;
                             break;
@@ -3196,7 +3315,7 @@ namespace MySFformat
 
                     }
 
-                }
+                }*/
 
 
                 autoBackUp(); targetFlver.Write(flverName);
@@ -3220,14 +3339,14 @@ namespace MySFformat
                     float yaw = 0;
                     foreach (FLVER.Vertex v in targetFlver.Meshes[i].Vertices)
                     {
-                        for (int j = 0; j < v.Positions.Count; j++)
+                        for (int j = 0; j < v.Position.Length(); j++)
                         {
-                            v.Positions[j] = RotatePoint(v.Positions[j], pitch, roll, yaw);
+                            v.Position = RotatePoint(v.Position, pitch, roll, yaw);
                         }
 
-                        for (int j2 = 0; j2 < v.Normals.Count; j2++)
+                        for (int j2 = 0; j2 < v.Normal.Length(); j2++)
                         {
-                            v.Normals[j2] = RotatePoint(v.Normals[j2], pitch, roll, yaw);
+                            v.Normal = RotatePoint(v.Normal, pitch, roll, yaw);
 
                         }
                         for (int j2 = 0; j2 < v.Tangents.Count; j2++)
@@ -3270,14 +3389,14 @@ namespace MySFformat
                     }*/
 
 
-                    foreach (FLVER.FaceSet fs in targetFlver.Meshes[i].FaceSets)
+                    foreach (FLVER2.FaceSet fs in targetFlver.Meshes[i].FaceSets)
                     {
 
-                        for (int ifs = 0; ifs < fs.Vertices.Length; ifs += 3)
+                        for (int ifs = 0; ifs < fs.Indices.Count; ifs += 3)
                         {
-                            uint temp = fs.Vertices[ifs + 1];
-                            fs.Vertices[ifs + 1] = fs.Vertices[ifs + 2];
-                            fs.Vertices[ifs + 2] = temp;
+                            uint temp = (uint)fs.Indices[ifs + 1];
+                            fs.Indices[ifs + 1] = fs.Indices[ifs + 2];
+                            fs.Indices[ifs + 2] = (int)temp;
                         }
                     }
 
@@ -3302,9 +3421,9 @@ namespace MySFformat
 
                     foreach (FLVER.Vertex v in targetFlver.Meshes[i].Vertices)
                     {
-                        for (int j2 = 0; j2 < v.Normals.Count; j2++)
+                        for (int j2 = 0; j2 < v.Normal.Length(); j2++)
                         {
-                            v.Normals[j2] = new Vector4(-v.Normals[j2].X, -v.Normals[j2].Y, -v.Normals[j2].Z, v.Normals[j2].W);
+                            v.Normal = new Vector4(-v.Normal.X, -v.Normal.Y, -v.Normal.Z, v.Normal.W);
 
                         }
                         for (int j2 = 0; j2 < v.Tangents.Count; j2++)
@@ -3374,7 +3493,7 @@ namespace MySFformat
 
 
 
-        static void materialQuickEdit(FLVER.Material m , int mIndex = 0)
+        static void materialQuickEdit(FLVER2.Material m , int mIndex = 0)
         {
             //MessageBox.Show("Now editing material:" + m.Name);
             Form f = new Form();
@@ -3445,13 +3564,11 @@ namespace MySFformat
 
                 for (int i2 = 0; i2 < m.Textures.Count; i2++)
                 {
-
                     m.Textures[i2].Path = pathList[i2].Text;
                     m.Textures[i2].Type = typeList[i2].Text;
                 }
 
-
-                    autoBackUp(); targetFlver.Write(flverName);
+                autoBackUp(); targetFlver.Write(flverName);
                 MessageBox.Show("Modification saved! Please exit the material window!");
                 f.Close();
             };
@@ -3536,7 +3653,7 @@ namespace MySFformat
             btnOkJs.Click += (s, e) =>
             {
                 // for () { }
-                targetFlver.Materials[mIndex] = new JavaScriptSerializer().Deserialize<FLVER.Material>(tJs.Text);
+                targetFlver.Materials[mIndex] = new JavaScriptSerializer().Deserialize<FLVER2.Material>(tJs.Text);
                 autoBackUp(); targetFlver.Write(flverName);
                 MessageBox.Show("Modification saved! Please exit the material window!");
                 f.Close();
@@ -3632,8 +3749,8 @@ namespace MySFformat
                         Assimp.Mesh meshNew = new Mesh("Mesh_M" + i, Assimp.PrimitiveType.Triangle);
                         foreach (var v in m.Vertices)
                         {
-                            meshNew.Vertices.Add(new Assimp.Vector3D(v.Positions[0].X, v.Positions[0].Y, v.Positions[0].Z));
-                            meshNew.Normals.Add(new Assimp.Vector3D(v.Normals[0].X, v.Normals[0].Y, v.Normals[0].Z));
+                            meshNew.Vertices.Add(new Assimp.Vector3D(v.Position.X, v.Position.Y, v.Position.Z));
+                            meshNew.Normals.Add(new Assimp.Vector3D(v.Normal.X, v.Normal.Y, v.Normal.Z));
                             meshNew.Tangents.Add(new Assimp.Vector3D(v.Tangents[0].X, v.Tangents[0].Y, v.Tangents[0].Z));
                             meshNew.TextureCoordinateChannels[0].Add(new Assimp.Vector3D(v.UVs[0].X,1 - v.UVs[0].Y,0));
                             
@@ -3642,9 +3759,9 @@ namespace MySFformat
                         
                         foreach (var fs in m.FaceSets)
                         {
-                            foreach (var arr in fs.GetFaces())
+                            foreach (var arr in fs.Indices)
                             {
-                                meshNew.Faces.Add(new Face(new int[] { (int)arr[0], (int)arr[1],(int)arr[2] }));
+                                meshNew.Faces.Add(new Face(new int[] { arr }));
                             }
                         }
 
@@ -3685,7 +3802,7 @@ namespace MySFformat
         /// Dummy Text
         /// </summary>
         /// <param name="newBones">The new bones list</param>
-        public static void BoneWeightShift(List<FLVER.Bone> newBones)
+        public static void BoneWeightShift(List<FLVER2.Bone> newBones)
         {
             //Step 1 build a int table to map old bone index -> new bone index
             int[] boneMapTable = new int[targetFlver.Bones.Count];
@@ -3711,7 +3828,7 @@ namespace MySFformat
 
 
         //Find Bone index, if no such bone find its parent's index
-        public static int findNewIndex(List<FLVER.Bone> newBones, int oldBoneIndex)
+        public static int findNewIndex(List<FLVER2.Bone> newBones, int oldBoneIndex)
         {
             int ans = 0;
             string oldBoneName = targetFlver.Bones[oldBoneIndex].Name;
@@ -3728,7 +3845,7 @@ namespace MySFformat
             return 0;
         }
 
-        public static int findNewIndexByName(List<FLVER.Bone> newBones, string oldBoneName) {
+        public static int findNewIndexByName(List<FLVER2.Bone> newBones, string oldBoneName) {
 
             for (int i =0; i < newBones.Count;i++)
             {
@@ -3787,41 +3904,41 @@ namespace MySFformat
 
 
             int layoutCount = targetFlver.BufferLayouts.Count;
-            FLVER.BufferLayout newBL = new FLVER.BufferLayout();
+            FLVER2.BufferLayout newBL = new FLVER2.BufferLayout();
 
-            newBL.Add(new FLVER.BufferLayout.Member(0, 0, FLVER.BufferLayout.MemberType.Float3, FLVER.BufferLayout.MemberSemantic.Position, 0));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 12, FLVER.BufferLayout.MemberType.Byte4B, FLVER.BufferLayout.MemberSemantic.Normal, 0));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 16, FLVER.BufferLayout.MemberType.Byte4B, FLVER.BufferLayout.MemberSemantic.Tangent, 0));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 20, FLVER.BufferLayout.MemberType.Byte4B, FLVER.BufferLayout.MemberSemantic.Tangent, 1));
-
-            newBL.Add(new FLVER.BufferLayout.Member(0, 24, FLVER.BufferLayout.MemberType.Byte4B, FLVER.BufferLayout.MemberSemantic.BoneIndices, 0));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 28, FLVER.BufferLayout.MemberType.Byte4C, FLVER.BufferLayout.MemberSemantic.BoneWeights, 0));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 32, FLVER.BufferLayout.MemberType.Byte4C, FLVER.BufferLayout.MemberSemantic.VertexColor, 1));
-            newBL.Add(new FLVER.BufferLayout.Member(0, 36, FLVER.BufferLayout.MemberType.UVPair, FLVER.BufferLayout.MemberSemantic.UV, 0));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Float3, FLVER.LayoutSemantic.Position, 0, 0));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4B, FLVER.LayoutSemantic.Normal, 0, 0));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4B, FLVER.LayoutSemantic.Tangent, 0, 0));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4B, FLVER.LayoutSemantic.Tangent, 1, 0));
+                                                                            
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4B, FLVER.LayoutSemantic.BoneIndices, 0, 0));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4C, FLVER.LayoutSemantic.BoneWeights, 0, 0));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.Byte4C, FLVER.LayoutSemantic.VertexColor, 1, 0));
+            newBL.Add(new FLVER.LayoutMember(FLVER.LayoutType.UVPair, FLVER.LayoutSemantic.UV, 0, 0));
 
             targetFlver.BufferLayouts.Add(newBL);
 
-            foreach (FLVER.Mesh mn in targetFlver.Meshes)
+            foreach (FLVER2.Mesh mn in targetFlver.Meshes)
             {
 
-                //FLVER.Mesh mn = new FLVER.Mesh();
+                //FLVER2.Mesh mn = new FLVER.Mesh();
                // mn.MaterialIndex = 0;
                // mn.BoneIndices = new List<int>();
                // mn.BoneIndices.Add(0);
                // mn.BoneIndices.Add(1);
-                mn.BoundingBoxMax = new Vector3(1, 1, 1);
-                mn.BoundingBoxMin = new Vector3(-1, -1, -1);
-                mn.BoundingBoxUnk = new Vector3();
-                mn.Unk1 = 0;
+                mn.BoundingBox.Max = new Vector3(1, 1, 1);
+                mn.BoundingBox.Min = new Vector3(-1, -1, -1);
+                mn.BoundingBox.Unk = new Vector3();
+                //mn.Unk1 = 0;
                 
                 mn.DefaultBoneIndex = 0;
                 mn.Dynamic = true;
-                 mn.VertexBuffers = new List<FLVER.VertexBuffer>();
-                 mn.VertexBuffers.Add(new FLVER.VertexBuffer(0, layoutCount, -1));
+                 mn.VertexBuffers = new List<FLVER2.VertexBuffer>();
+                 mn.VertexBuffers.Add(new FLVER2.VertexBuffer(layoutCount));
                 //  mn.Vertices = new List<FLVER.Vertex>();
-                var varray = mn.FaceSets[0].Vertices;
+                var varray = mn.FaceSets[0].Indices;
                 
-                mn.FaceSets = new List<FLVER.FaceSet>();
+                mn.FaceSets = new List<FLVER2.FaceSet>();
                 //FLVER.Vertex myv = new FLVER.Vertex();
                 //myv.Colors = new List<FLVER.Vertex.Color>();
 
@@ -3832,20 +3949,20 @@ namespace MySFformat
                 {
                     FLVER.Vertex vit = mn.Vertices[i];
 
-                    mn.Vertices[i] = generateVertex(new Vector3(vit.Positions[0].X, vit.Positions[0].Y, vit.Positions[0].Z), vit.UVs[0], vit.UVs[0], vit.Normals[0], vit.Tangents[0], 1);
+                    mn.Vertices[i] = generateVertex(new Vector3(vit.Position.X, vit.Position.Y, vit.Position.Z), vit.UVs[0], vit.UVs[0], vit.Normal, vit.Tangents[0], 1);
                     mn.Vertices[i].BoneIndices = vit.BoneIndices;
                     mn.Vertices[i].BoneWeights = vit.BoneWeights;
 
                 }
 
                 mn.FaceSets.Add(generateBasicFaceSet());
-                mn.FaceSets[0].Vertices = varray;
+                mn.FaceSets[0].Indices = varray;
                 mn.FaceSets[0].CullBackfaces = false;
                 //mn.FaceSets[0].Unk06 = 17;
-                if (mn.FaceSets[0].Vertices.Length > 65534)
+                if (mn.FaceSets[0].Indices.Count > 65534)
                 {
                     MessageBox.Show("There are more than 65535 vertices in a mesh , switch to 32 bits index size mode.");
-                    mn.FaceSets[0].IndexSize = 32;
+                    mn.FaceSets[0].Unk07 = 32;
                 }
             }
 
@@ -3853,7 +3970,7 @@ namespace MySFformat
 
         }
 
-        public static void SetFlverMatPath(FLVER.Material m, string typeName, string newPath)
+        public static void SetFlverMatPath(FLVER2.Material m, string typeName, string newPath)
         {
             for (int i=0;i < m.Textures.Count;i++)
             {
@@ -3866,11 +3983,14 @@ namespace MySFformat
 
             }
 
-            FLVER.Texture tn = new FLVER.Texture();
+            FLVER2.Texture tn = new FLVER2.Texture();
+            Vector2 tempScale = new Vector2();
+            tempScale = tn.Scale;
             tn.Type = typeName;
             tn.Path = newPath;
-            tn.ScaleX = 1;
-            tn.ScaleY = 1;
+            tempScale.X = 1;
+            tempScale.Y = 1;
+            tn.Scale = tempScale;
             tn.Unk10 = 1;
             tn.Unk11 = true;
             m.Textures.Add(tn);
